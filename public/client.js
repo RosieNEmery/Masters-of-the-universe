@@ -9,6 +9,8 @@ const NEAR_CLIPPING = 0.1;
 
 var u_selection = 1.0;
 
+
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0x000000);
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -67,7 +69,8 @@ attachEventListeners();
 //window resize event
 function attachEventListeners(){
 		window.addEventListener("resize", this.onWindowResize.bind(this), false);
-		window.addEventListener("keydown", this.onKeyDown.bind(this), false);
+		window.addEventListener("keydown", this.onKeyDown.bind(this), true);
+		window.addEventListener("keyup", this.onKeyUp.bind(this), true);
 }
 
 function onWindowResize(event){
@@ -76,10 +79,12 @@ function onWindowResize(event){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-
-
 function onKeyDown(event){
-	playerKeyPress(event);
+	key_state[event.keyCode || event.which] = true;
+}
+
+function onKeyUp(event){
+	key_state[event.keyCode || event.which] = false;
 }
 
 
