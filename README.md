@@ -1,4 +1,4 @@
-#Masters of the universe
+# Masters of the universe
 
 Masters of the universe is the working title of a small webgl game being developed by Rosie Emery and Quentin Corker-Marin.
 
