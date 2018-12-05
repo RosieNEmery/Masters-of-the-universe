@@ -16,50 +16,62 @@ renderer.setSize(WIDTH, HEIGHT);
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(ASPECT, WIDTH / HEIGHT, NEAR_CLIPPING, FAR_CLIPPING);
-camera.lookAt(new THREE.Vector3(100,0,0));
-camera.position.set(0,400,1);
+camera.lookAt(new THREE.Vector3(0,0,0));
+camera.position.set(0,0,1);
 scene.add(camera);
 
 //add camera controls
 const controls = new THREE.OrbitControls(camera);
 controls.update();
 
-
 document.body.appendChild(renderer.domElement);
-	
+
+//Create shader
+let vertShader = require("./shaders/vertex.glsl");
+let fragShader = require("./shaders/fragment.glsl");
+
+const texture = new THREE.TextureLoader().load('./img/grass.jpg');
+texture.wrapS = THREE.RepeatWrapping;
+
+uniforms = {
+		texture : {type: 't', value: texture},
+		u_time : {type: "f", value: 0.0},
+};
+
+//custom material
+const glsl_material = new THREE.ShaderMaterial({
+		uniforms: uniforms,
+		vertexShader:   vShader.textContent,
+		fragmentShader: fShader.textContent,
+		transparent: true,
+		depthTest: true
+});
+
 //Add a cube to the scene
-const box_geometry = new THREE.BoxGeometry(2,2,2);
+const plane_geometry = new THREE.PlaneGeometry(1,1,1,1);
 const material = new THREE.MeshBasicMaterial({color: 0xffff00});
-const cube = new THREE.Mesh(box_geometry, material);
+const plane = new THREE.Mesh(plane_geometry, material);
 
-cube.position.set(0, 0.5, -2);
-scene.add(cube);
+plane.position.set(0, 0, -2);
+scene.add(plane);
 
-
-
-// Add a directional light to the scene
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-scene.add(directionalLight);
-
+attachEventListeners();
 //window resize event
-onWindowResize();
-window.addEventListener('resize', onWindowResize, false);
+function attachEventListeners(){
+		window.addEventListener("resize", this.onWindowResize.bind(this), false);
+}
 
-function onWindowResize(event)
-{
+function onWindowResize(event){
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Start the render loop 
-function render() 
-{
+// Start the render loop
+function render(){
   requestAnimationFrame(render);
   controls.update();
   renderer.render(scene, camera);
-}     
+}
 
 render();
-
