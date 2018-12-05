@@ -7,7 +7,12 @@ const ASPECT = 50;
 const FAR_CLIPPING = 1000;
 const NEAR_CLIPPING = 0.1;
 
-var u_selection = 1.0;
+var u_player_selection = 1.0;
+var u_flame_selection = 1.0;
+var flame_on = false;
+var flame_mult = 1.5;
+var on_timer;
+var off_timer;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0x000000);
@@ -28,39 +33,74 @@ controls.update();
 
 document.body.appendChild(renderer.domElement);
 
-//Create shader
-let vertShader = document.querySelector('#vertexshader');
-let fragShader = document.querySelector('#fragmentshader');
+//Create player shader
+let Player_vertShader = document.querySelector('#vertexshader');
+let Player_fragShader = document.querySelector('#fragmentshader');
 
 const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
 texture.wrapS = THREE.RepeatWrapping;
 
-uniforms = {
+player_uniforms = {
 		texture : {type: 't', value: texture},
-		u_selection: {type: 'f', value: u_selection}
+		u_selection: {type: 'f', value: u_player_selection}
 };
 
 //custom material
-const glsl_material = new THREE.ShaderMaterial({
-		uniforms: uniforms,
-		vertexShader:   vertShader.textContent,
-		fragmentShader: fragShader.textContent,
+const player_material = new THREE.ShaderMaterial({
+		uniforms: player_uniforms,
+		vertexShader:   Player_vertShader.textContent,
+		fragmentShader: Player_fragShader.textContent,
 		side: THREE.DoubleSide,
-		transparent: true
+		//transparent: true
 });
 
-//Add a cube to the scene
-const player_geometry = new THREE.PlaneGeometry(1, 1, 2);
-const player = new THREE.Mesh(player_geometry, glsl_material);
+//Create flame shader
+let Flame_vertShader = document.querySelector('#flame_vertexshader');
+let Flame_fragShader = document.querySelector('#flame_fragmentshader');
+
+flame_uniforms = {
+		texture : {type: 't', value: texture},
+		u_selection: {type: 'f', value: u_flame_selection},
+		u_flame_mult: {type: 'f', value: flame_mult}
+};
+
+//custom material
+const flame_material = new THREE.ShaderMaterial({
+		uniforms: flame_uniforms,
+		vertexShader:   Flame_vertShader.textContent,
+		fragmentShader: Flame_fragShader.textContent,
+		side: THREE.DoubleSide,
+		//transparent: true
+});
+
+//Add a player to the scene
+const player_geometry = new THREE.PlaneGeometry(1, 1, 2, 2);
+const player = new THREE.Mesh(player_geometry, player_material);
+
+const flame_geometry = new THREE.PlaneGeometry(0.4, 0.4, 1, 1);
+const flame_01 = new THREE.Mesh(flame_geometry, flame_material);
+const flame_02 = flame_01.clone();
+flame_01.position.set(-0.25, -0.34, 0.01);
+flame_02.position.set(0.25, -0.34, 0.01);
 
 scene.add(player);
+player.add(flame_01);
+player.add(flame_02);
 
 setInterval(function() {
-			u_selection += 1;
-			if(u_selection > 16)
-				u_selection = 1;
+		u_player_selection += 1;
+		if(u_player_selection > 16)
+			u_player_selection = 1;
 
-				glsl_material.uniforms.u_selection.value = u_selection;
+			player_material.uniforms.u_selection.value = u_player_selection;
+	}, 50);
+
+	setInterval(function() {
+			u_flame_selection += 1;
+			if(u_flame_selection > 16)
+				u_flame_selection = 1;
+
+				flame_material.uniforms.u_selection.value = u_flame_selection;
 		}, 50);
 
 attachEventListeners();
@@ -68,6 +108,8 @@ attachEventListeners();
 function attachEventListeners(){
 		window.addEventListener("resize", this.onWindowResize.bind(this), false);
 		window.addEventListener("keydown", this.onKeyDown.bind(this), false);
+
+		flame_event.addEventListener('flame_on', this.onFlameOn.bind(this), false);
 }
 
 function onWindowResize(event){
@@ -77,12 +119,44 @@ function onWindowResize(event){
 }
 
 
-
 function onKeyDown(event){
 	playerKeyPress(event);
 }
 
+function onFlameOn(event){
+	if(event.message == true) {
+		if(flame_on == false && flame_mult <= 1.5 && flame_mult >= 1){
+			flame_on = true;
+			clearInterval(off_timer);
+			on_timer = setInterval(this.increaseFlame, 20);
+		}
+	} else {
+		flame_on = false;
+	}
+}
 
+function increaseFlame(){
+	flame_mult -= 0.1;
+	flame_material.uniforms.u_flame_mult.value = flame_mult;
+	console.log("increase",flame_mult);
+	if(flame_mult <= 1.0){
+		clearInterval(on_timer);
+		off_timer = setInterval(this.decreaseFlame, 20);
+	}
+}
+
+function decreaseFlame(){
+	console.log("decrease",flame_mult);
+	if(flame_mult < 1.5){
+		flame_mult += 0.1;
+		flame_material.uniforms.u_flame_mult.value = flame_mult;
+	}
+	else {
+		clearInterval(off_timer);
+		//flame_on = false;
+	}
+
+}
 
 // Start the render loop
 function render()
@@ -92,6 +166,6 @@ function render()
   controls.update();
   renderer.render(scene, camera);
 }
-//lol
+
 
 render();

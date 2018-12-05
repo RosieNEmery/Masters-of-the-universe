@@ -1,6 +1,9 @@
 var target_pos = new THREE.Vector3(0,0,0);
 var player_pos = new THREE.Vector3(0,0,0);
 
+var flame_event = new THREE.Object3D();
+THREE.EventDispatcher.call( flame_event );
+
 function playerKeyPress(event){
   if(event.key=="w" || event.key=="ArrowUp"){
     target_pos.y += 1;
@@ -32,6 +35,13 @@ function playerUpdate(){
     move.clampScalar(-0.1, 0.1);
 
     player_pos.add(move);
+
+    if(player_pos.y > player.position.y){
+      flame_event.dispatchEvent({type:'flame_on', message:true});
+    } else{
+      flame_event.dispatchEvent({type:'flame_on', message:false});
+    }
+
     player.position.set(player_pos.x, player_pos.y, player_pos.z);
     player.rotation.set(0, move.x*10, 0);
   }
