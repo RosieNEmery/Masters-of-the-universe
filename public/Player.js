@@ -28,10 +28,11 @@ function playerUpdate(){
   if(player_pos.equals(target_pos) == false){
     var move = new THREE.Vector3(0, 0, 0);
     move.subVectors(target_pos, player_pos);
-    move.divideScalar(10);
+    move.divideScalar(15);
     move.clampScalar(-0.1, 0.1);
 
     player_pos.add(move);
     player.position.set(player_pos.x, player_pos.y, player_pos.z);
+    player.rotation.set(0, move.x*10, 0);
   }
 }
