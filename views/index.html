@@ -4,6 +4,39 @@
     <meta charset="utf-8">
     <title>Game</title>
     <link rel="stylesheet" href="/style.css">
+
+
+    <script src="./shader/vertex.js" type="x-shader/x-vertex" id="vertexshader">
+      precision highp float;
+
+      uniform float u_selection;
+      varying vec2 vUv;
+
+      void main() {
+        vUv = uv;
+        float x_size = 16.0;
+        float y_size = 16.0;
+
+        float uv_y = ((1.0 - vUv.y)/y_size) + (1.0 - 1.0/y_size);
+        float uv_x = (vUv.x/x_size) + ((1.0/x_size) * u_selection);
+        vUv = vec2(uv_x, uv_y);
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+      }
+
+    </script>
+    <script src="./shader/fragment.js" type="x-shader/x-fragment" id="fragmentshader">
+    precision highp float;
+
+    uniform sampler2D texture;
+    varying vec2 vUv;
+
+    void main() {
+      gl_FragColor = texture2D(texture, vUv);
+    }
+
+    </script>
+
   </head>
   <body>
 
