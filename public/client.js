@@ -16,8 +16,8 @@ renderer.setSize(WIDTH, HEIGHT);
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(ASPECT, WIDTH / HEIGHT, NEAR_CLIPPING, FAR_CLIPPING);
-camera.lookAt(new THREE.Vector3(100,0,0));
-camera.position.set(0,400,1);
+camera.lookAt(new THREE.Vector3(0,0,0));
+camera.position.set(0,0,5);
 scene.add(camera);
 
 //add camera controls
@@ -26,14 +26,13 @@ controls.update();
 
 
 document.body.appendChild(renderer.domElement);
-	
-//Add a cube to the scene
-const box_geometry = new THREE.BoxGeometry(2,2,2);
-const material = new THREE.MeshBasicMaterial({color: 0xffff00});
-const cube = new THREE.Mesh(box_geometry, material);
 
-cube.position.set(0, 0.5, -2);
-scene.add(cube);
+//Add a grid
+const player_geometry = new THREE.PlaneGeometry(1, 1, 2);
+const material = new THREE.MeshBasicMaterial({color: 0xffff00, side: THREE.DoubleSide});
+const player = new THREE.Mesh(player_geometry, material);
+
+scene.add(player);
 
 
 
@@ -53,13 +52,27 @@ function onWindowResize(event)
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Start the render loop 
-function render() 
+
+function  attachEventListners(){
+	window.addEventListener("resize", this.onWindowResize.bind(this), false);
+	window.addEventListener("keydown", this.onKeyDown.bind(this), false);
+}
+attachEventListners();
+
+function onKeyDown(event){
+	playerKeyPress(event);
+}
+
+
+
+// Start the render loop
+function render()
 {
   requestAnimationFrame(render);
+	this.playerUpdate();
   controls.update();
   renderer.render(scene, camera);
-}     
+
+}
 
 render();
-
