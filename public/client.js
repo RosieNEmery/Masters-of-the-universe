@@ -19,7 +19,7 @@ const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(ASPECT, WIDTH / HEIGHT, NEAR_CLIPPING, FAR_CLIPPING);
 camera.lookAt(new THREE.Vector3(0,0,0));
-camera.position.set(0,0,1);
+camera.position.set(0, 0, 5);
 scene.add(camera);
 
 //add camera controls
@@ -50,12 +50,10 @@ const glsl_material = new THREE.ShaderMaterial({
 });
 
 //Add a cube to the scene
-const plane_geometry = new THREE.PlaneGeometry(1,1,1,1);
-const material = new THREE.MeshBasicMaterial({color: 0xffff00});
-const plane = new THREE.Mesh(plane_geometry, glsl_material);
+const player_geometry = new THREE.PlaneGeometry(1, 1, 2);
+const player = new THREE.Mesh(player_geometry, glsl_material);
 
-plane.position.set(0, 0, -2);
-scene.add(plane);
+scene.add(player);
 
 setInterval(function() {
 			u_selection += 1;
@@ -69,6 +67,7 @@ attachEventListeners();
 //window resize event
 function attachEventListeners(){
 		window.addEventListener("resize", this.onWindowResize.bind(this), false);
+		window.addEventListener("keydown", this.onKeyDown.bind(this), false);
 }
 
 function onWindowResize(event){
@@ -77,13 +76,19 @@ function onWindowResize(event){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+
+
+function onKeyDown(event){
+	playerKeyPress(event);
+}
+
+
+
 // Start the render loop
-function render(){
-
-
-	//console.log(u_selection);
-
+function render()
+{
   requestAnimationFrame(render);
+	this.playerUpdate();
   controls.update();
   renderer.render(scene, camera);
 }
