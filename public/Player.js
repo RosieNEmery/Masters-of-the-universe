@@ -1,48 +1,49 @@
-var target_pos = new THREE.Vector3(0,0,0);
 var player_pos = new THREE.Vector3(0,0,0);
+var player_vel = new THREE.Vector3(0,0,0);
 
-var flame_event = new THREE.Object3D();
-THREE.EventDispatcher.call( flame_event );
-
-function playerKeyPress(event){
-  if(event.key=="w" || event.key=="ArrowUp"){
-    target_pos.y += 1;
-  }
-  else if(event.key=="s" || event.key=="ArrowDown"){
-    target_pos.y -= 1;
-  }
-  else if(event.key=="a" || event.key=="ArrowLeft"){
-    target_pos.x -= 1;
-  }
-  else if(event.key=="d" || event.key=="ArrowRight"){
-    target_pos.x += 1;
-  }
-  else if(event.key == " "){
-    playerShoot();
-  }
-
-}
+var player_speed_limit = 0.1;
+var player_bank_limit = 0.1;
+var player_acc = 0.01;
 
 function playerShoot(){
   console.log("pew pew");
 }
 
 function playerUpdate(){
-  if(player_pos.equals(target_pos) == false){
-    var move = new THREE.Vector3(0, 0, 0);
-    move.subVectors(target_pos, player_pos);
-    move.divideScalar(15);
-    move.clampScalar(-0.1, 0.1);
+  this.playerKeyHandler();
+  player_pos.add(player_vel);
+  player.position.set(player_pos.x, player_pos.y, player_pos.z);
+  var bank = player_vel.x * 5;
+  this.clamp(bank, -player_bank_limit, player_bank_limit);
+  player.rotation.set(0, bank, 0);
+}
 
-    player_pos.add(move);
-
-    if(player_pos.y > player.position.y){
-      flame_event.dispatchEvent({type:'flame_on', message:true});
-    } else{
-      flame_event.dispatchEvent({type:'flame_on', message:false});
-    }
-
-    player.position.set(player_pos.x, player_pos.y, player_pos.z);
-    player.rotation.set(0, move.x*10, 0);
+function playerKeyHandler(){
+  if(key_state[87] || key_state[38]){
+    player_vel.y += player_acc;
   }
+  else if(key_state[83] || key_state[40]){
+    player_vel.y -= player_acc;
+  }
+  else{
+    player_vel.y *= 0.9;
+  }
+  if(key_state[65] || key_state[37]){
+    player_vel.x -= player_acc;
+  }
+  else if(key_state[68] || key_state[39]){
+    player_vel.x += player_acc;
+  }
+  else
+  {
+    player_vel.x *= 0.9;
+  }
+  player_vel.clampScalar(-player_speed_limit, player_speed_limit);
+
+  if(key_state[32]){
+    this.playerShoot();
+  }
+
+  flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
+
 }

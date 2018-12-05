@@ -48,7 +48,7 @@
         vUv = uv;
         float sprite_size = 16.0;
         float sprite_fraction = 1.0/16.0;
-        float scale = 0.25 * u_flame_mult;
+        float scale = 0.3 * u_flame_mult;
 
         float uv_y = vUv.y - 0.5;
         uv_y *= scale;
@@ -64,7 +64,7 @@
 
         uv_x = (uv_x/sprite_size) + (sprite_fraction * u_selection);
 
-        vUv = vec2(uv_x, uv_y + 0.01);
+        vUv = vec2(uv_x, uv_y + 0.009);
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
       }
@@ -89,6 +89,7 @@
     <!-- Your web-app is https, so your scripts need to be too -->
     <script src="/three.js"></script>
     <script src="/OrbitControls.js"></script>
+    <script src="/utils.js"></script>
     <script src="/Player.js"></script>
     <script src="/client.js"></script>
     <script src="/GameObject.js"></script>

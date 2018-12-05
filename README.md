@@ -1,27 +1,5 @@
-Welcome to the Gomix BETA
-=========================
+# Masters of the universe
 
-Click `Show` in the header to see your app live. Updates to your code will instantly deploy and update live.
+Masters of the universe is the working title of a small webgl game being developed by Rosie Emery and Quentin Corker-Marin.
 
-Gomix is a developer playground that lets you code a real web-app without the slow setup and deployment steps.
-
-[About Gomix](https://gomix.com/about)
-
-
-Your Project
-------------
-
-On the back-end,
-- your app starts at `server.js`
-- add frameworks and packages in `package.json`
-- safely store app secrets in `.env`
-
-On the front-end,
-- edit `client.js`, `style.css` and `index.html`
-- drag in `assets`, like images or music, to add them to your project
-
-
-Made by Fog Creek
------------------
-
-\ ゜o゜)ノ
+Its a fun little space shooter and we think that making it will be a lot like playing it; with all the boring things in life get in your way. These things slow down our development and will try to take you down when you play too. While you can do your best to shoot down your problems, some things can't be escaped.

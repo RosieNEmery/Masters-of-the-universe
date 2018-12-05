@@ -88,28 +88,27 @@ player.add(flame_01);
 player.add(flame_02);
 
 setInterval(function() {
-		u_player_selection += 1;
-		if(u_player_selection > 16)
-			u_player_selection = 1;
+	u_player_selection += 1;
+	if(u_player_selection > 16)
+		u_player_selection = 1;
 
-			player_material.uniforms.u_selection.value = u_player_selection;
+		player_material.uniforms.u_selection.value = u_player_selection;
+}, 50);
+
+setInterval(function() {
+		u_flame_selection += 1;
+		if(u_flame_selection > 16)
+			u_flame_selection = 1;
+
+			flame_material.uniforms.u_selection.value = u_flame_selection;
 	}, 50);
-
-	setInterval(function() {
-			u_flame_selection += 1;
-			if(u_flame_selection > 16)
-				u_flame_selection = 1;
-
-				flame_material.uniforms.u_selection.value = u_flame_selection;
-		}, 50);
 
 attachEventListeners();
 //window resize event
 function attachEventListeners(){
 		window.addEventListener("resize", this.onWindowResize.bind(this), false);
-		window.addEventListener("keydown", this.onKeyDown.bind(this), false);
-
-		flame_event.addEventListener('flame_on', this.onFlameOn.bind(this), false);
+		window.addEventListener("keydown", this.onKeyDown.bind(this), true);
+		window.addEventListener("keyup", this.onKeyUp.bind(this), true);
 }
 
 function onWindowResize(event){
@@ -118,44 +117,12 @@ function onWindowResize(event){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-
 function onKeyDown(event){
-	playerKeyPress(event);
+	key_state[event.keyCode || event.which] = true;
 }
 
-function onFlameOn(event){
-	if(event.message == true) {
-		if(flame_on == false && flame_mult <= 1.5 && flame_mult >= 1){
-			flame_on = true;
-			clearInterval(off_timer);
-			on_timer = setInterval(this.increaseFlame, 20);
-		}
-	} else {
-		flame_on = false;
-	}
-}
-
-function increaseFlame(){
-	flame_mult -= 0.1;
-	flame_material.uniforms.u_flame_mult.value = flame_mult;
-	console.log("increase",flame_mult);
-	if(flame_mult <= 1.0){
-		clearInterval(on_timer);
-		off_timer = setInterval(this.decreaseFlame, 20);
-	}
-}
-
-function decreaseFlame(){
-	console.log("decrease",flame_mult);
-	if(flame_mult < 1.5){
-		flame_mult += 0.1;
-		flame_material.uniforms.u_flame_mult.value = flame_mult;
-	}
-	else {
-		clearInterval(off_timer);
-		//flame_on = false;
-	}
-
+function onKeyUp(event){
+	key_state[event.keyCode || event.which] = false;
 }
 
 // Start the render loop
