@@ -75,7 +75,8 @@ const flame_material = new THREE.ShaderMaterial({
 
 //Add a player to the scene
 const player_geometry = new THREE.PlaneGeometry(1, 1, 2, 2);
-const player = new THREE.Mesh(player_geometry, player_material);
+const player_mesh = new THREE.Mesh(player_geometry, player_material);
+let player_updater = new Player(player_mesh, key_state);
 
 const flame_geometry = new THREE.PlaneGeometry(0.4, 0.4, 1, 1);
 const flame_01 = new THREE.Mesh(flame_geometry, flame_material);
@@ -83,9 +84,9 @@ const flame_02 = flame_01.clone();
 flame_01.position.set(-0.25, -0.34, 0.01);
 flame_02.position.set(0.25, -0.34, 0.01);
 
-scene.add(player);
-player.add(flame_01);
-player.add(flame_02);
+scene.add(player_mesh);
+player_mesh.add(flame_01);
+player_mesh.add(flame_02);
 
 setInterval(function() {
 	u_player_selection += 1;
@@ -129,7 +130,7 @@ function onKeyUp(event){
 function render()
 {
   requestAnimationFrame(render);
-	this.playerUpdate();
+	player_updater.update();
   controls.update();
   renderer.render(scene, camera);
 }
