@@ -31,8 +31,7 @@ class Flame{
     		uniforms: flame_uniforms,
     		vertexShader:   Flame_vertShader.textContent,
     		fragmentShader: Flame_fragShader.textContent,
-    		side: THREE.DoubleSide,
-    		//transparent: true
+    		transparent: true
     });
 
     //create geo and move mesh to position
