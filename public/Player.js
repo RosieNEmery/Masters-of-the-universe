@@ -10,6 +10,7 @@ class Player{
 
     this.pos = new THREE.Vector3(0, 0, 0);
     this.vel = new THREE.Vector3(0, 0, 0);
+    this.bullets = new BulletStack();
 
     this.speed_limit = 0.1;
     this.bank_limit = 0.1;
@@ -18,10 +19,13 @@ class Player{
 
   update(){
     this.keyHandler();
+
+    this.bullets.update();
+
     this.pos.add(this.vel);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
     var bank = this.vel.x * 5;
-    this.clamp(bank, -this.bank_limit, this.bank_limit);
+    clamp(bank, -this.bank_limit, this.bank_limit);
     this.mesh.rotation.set(0, bank, 0);
   }
 
@@ -50,14 +54,16 @@ class Player{
     if(this.global_key_states[32]){
       this.shoot();
     }
+
+    if(this.global_key_states[75]){
+      this.bullets.print();
+    }
   }
 
   shoot(){
-    console.log("bam");
+    this.bullets.shoot(new THREE.Vector3(this.pos.x, this.pos.y, this.pos.z));
   }
 
-  clamp(a, upper_limit, lower_limit){
-    return Math.max(Math.min(a, upper_limit), lower_limit);
-  }
+
 
 }

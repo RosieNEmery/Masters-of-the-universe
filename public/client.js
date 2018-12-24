@@ -120,6 +120,7 @@ function onWindowResize(event){
 
 function onKeyDown(event){
 	key_state[event.keyCode || event.which] = true;
+	//console.log(event.keyCode);
 }
 
 function onKeyUp(event){
