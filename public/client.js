@@ -1,6 +1,8 @@
 // client-side js
 // run by the browser each time your view template is loaded
 
+import * as THREE from 'three/build/three.modules'
+
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 const ASPECT = 50;
@@ -27,10 +29,6 @@ camera.lookAt(new THREE.Vector3(0,0,0));
 camera.position.set(0, 0, 5);
 scene.add(camera);
 
-//add camera controls
-const controls = new THREE.OrbitControls(camera);
-controls.update();
-
 document.body.appendChild(renderer.domElement);
 
 //Create player shader
@@ -40,7 +38,7 @@ let Player_fragShader = document.querySelector('#fragmentshader');
 const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
 texture.wrapS = THREE.RepeatWrapping;
 
-player_uniforms = {
+const player_uniforms = {
 		texture : {type: 't', value: texture},
 		u_selection: {type: 'f', value: u_player_selection}
 };
@@ -58,7 +56,7 @@ const player_material = new THREE.ShaderMaterial({
 let Flame_vertShader = document.querySelector('#flame_vertexshader');
 let Flame_fragShader = document.querySelector('#flame_fragmentshader');
 
-flame_uniforms = {
+const flame_uniforms = {
 		texture : {type: 't', value: texture},
 		u_selection: {type: 'f', value: u_flame_selection},
 		u_flame_mult: {type: 'f', value: flame_mult}
@@ -130,7 +128,6 @@ function render()
 {
   requestAnimationFrame(render);
 	this.playerUpdate();
-  controls.update();
   renderer.render(scene, camera);
 }
 
