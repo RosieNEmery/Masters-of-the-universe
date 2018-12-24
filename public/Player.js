@@ -1,49 +1,61 @@
-var player_pos = new THREE.Vector3(0,0,0);
-var player_vel = new THREE.Vector3(0,0,0);
 
-var player_speed_limit = 0.1;
-var player_bank_limit = 0.1;
-var player_acc = 0.01;
+//flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
 
-function playerShoot(){
-  console.log("pew pew");
-}
+class Player{
+  constructor(mesh, global_key_states){
+    this.mesh = mesh;
+    this.global_key_states = global_key_states;
 
-function playerUpdate(){
-  this.playerKeyHandler();
-  player_pos.add(player_vel);
-  player.position.set(player_pos.x, player_pos.y, player_pos.z);
-  var bank = player_vel.x * 5;
-  this.clamp(bank, -player_bank_limit, player_bank_limit);
-  player.rotation.set(0, bank, 0);
-}
+    this.pos = new THREE.Vector3(0, 0, 0);
+    this.vel = new THREE.Vector3(0, 0, 0);
 
-function playerKeyHandler(){
-  if(key_state[87] || key_state[38]){
-    player_vel.y += player_acc;
-  }
-  else if(key_state[83] || key_state[40]){
-    player_vel.y -= player_acc;
-  }
-  else{
-    player_vel.y *= 0.9;
-  }
-  if(key_state[65] || key_state[37]){
-    player_vel.x -= player_acc;
-  }
-  else if(key_state[68] || key_state[39]){
-    player_vel.x += player_acc;
-  }
-  else
-  {
-    player_vel.x *= 0.9;
-  }
-  player_vel.clampScalar(-player_speed_limit, player_speed_limit);
-
-  if(key_state[32]){
-    this.playerShoot();
+    this.speed_limit = 0.1;
+    this.bank_limit = 0.1;
+    this.acc = 0.01;
   }
 
-  flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
+  update(){
+    this.keyHandler();
+    this.pos.add(this.vel);
+    this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
+    var bank = this.vel.x * 5;
+    this.clamp(bank, -this.bank_limit, this.bank_limit);
+    this.mesh.rotation.set(0, bank, 0);
+  }
+
+  keyHandler(){
+    if(this.global_key_states[87] || this.global_key_states[38]){
+      this.vel.y += this.acc;
+    }
+    else if(this.global_key_states[83] || this.global_key_states[40]){
+      this.vel.y -= this.acc;
+    }
+    else{
+      this.vel.y *= 0.9;
+    }
+    if(this.global_key_states[65] || this.global_key_states[37]){
+      this.vel.x -= this.acc;
+    }
+    else if(this.global_key_states[68] || this.global_key_states[39]){
+      this.vel.x += this.acc;
+    }
+    else
+    {
+      this.vel.x *= 0.9;
+    }
+    this.vel.clampScalar(-this.speed_limit, this.speed_limit);
+
+    if(this.global_key_states[32]){
+      this.shoot();
+    }
+  }
+
+  shoot(){
+    console.log("bam");
+  }
+
+  clamp(a, upper_limit, lower_limit){
+    return Math.max(Math.min(a, upper_limit), lower_limit);
+  }
 
 }

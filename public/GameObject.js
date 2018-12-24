@@ -1,8 +1,0 @@
-class GameObject{
-  constructor(){
-
-  }
-  render(){
-
-  }
-}
