@@ -1,7 +1,5 @@
 
-
 //flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
-
 
 class Player{
   constructor(mesh, global_key_states){
