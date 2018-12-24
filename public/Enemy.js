@@ -10,7 +10,7 @@ class Enemy{
     this.child_array = [];
 
     this.pos = new THREE.Vector3(0, 2.5, -0.1);
-    this.vel = new THREE.Vector3(0, -0.1, 0);
+    this.vel = new THREE.Vector3(0, -0.01, 0);
 
     this.speed_limit = 0.1;
     this.acc = 0.01;
@@ -72,7 +72,6 @@ class Enemy{
   addChild(child){
     this.mesh.add(child.mesh);
     this.child_array.push(child);
-    console.log("HI");
   }
 
   getID(){
@@ -80,10 +79,7 @@ class Enemy{
   }
 
   update(){
-    const self = this;
-    setTimeout(function() {
-      self.updatePos();
-    }, 1000);
+    this.updatePos();
 
     //update life, look at passing reference of player?
   }
@@ -93,8 +89,9 @@ class Enemy{
 
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
 
-    if(this.pos.y < -2.5)
+    if(this.mesh.position.y < -2.5){
       this.deleteEnemy();
+    }
   }
 
   deleteEnemy(){
