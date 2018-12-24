@@ -2,8 +2,10 @@
 //flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
 
 class Player{
-  constructor(mesh, global_key_states){
-    this.mesh = mesh;
+  constructor(scene, global_key_states){
+    //for flames/stuff thats parented to it
+    this.child_array = [];
+
     this.global_key_states = global_key_states;
 
     this.pos = new THREE.Vector3(0, 0, 0);
@@ -12,14 +14,72 @@ class Player{
     this.speed_limit = 0.1;
     this.bank_limit = 0.1;
     this.acc = 0.01;
+
+    this.createMesh();
+    this.createFlames();
+  }
+
+  createMesh(){
+    //Create player shader
+    let Player_vertShader = document.querySelector('#vertexshader');
+    let Player_fragShader = document.querySelector('#fragmentshader');
+
+    const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
+    texture.wrapS = THREE.RepeatWrapping;
+
+    const player_uniforms = {
+    		texture : {type: 't', value: texture},
+    		u_selection: {type: 'f', value: u_player_selection},
+        u_sprite: {type: 'i', value: 0}
+    };
+
+    //custom material
+    const player_material = new THREE.ShaderMaterial({
+    		uniforms: player_uniforms,
+    		vertexShader:   Player_vertShader.textContent,
+    		fragmentShader: Player_fragShader.textContent,
+    		side: THREE.DoubleSide,
+    		transparent: true
+    });
+
+    //does switching of sprite along row
+    var u_player_selection = 1.0;
+    setInterval(function() {
+    	u_player_selection += 1;
+    	if(u_player_selection > 16)
+    		u_player_selection = 1;
+
+    		player_material.uniforms.u_selection.value = u_player_selection;
+    }, 50);
+
+    //add mesh to scene
+    const player_geometry = new THREE.PlaneGeometry(1, 1, 2, 2);
+    this.mesh = new THREE.Mesh(player_geometry, player_material);
+    scene.add(this.mesh);
+  }
+
+  createFlames(){
+    //creates Flame objects
+    this.flame_left = new Flame(scene, new THREE.Vector3(-0.25, -0.34, 0.01), this);
+    this.flame_right = new Flame(scene, new THREE.Vector3(0.25, -0.34, 0.01), this);
+
+    //parent to player
+    this.addChild(this.flame_left);
+    this.addChild(this.flame_right);
+  }
+
+  addChild(child){
+    this.mesh.add(child.mesh);
+    this.child_array.push(child);
   }
 
   update(){
     this.keyHandler();
+
     this.pos.add(this.vel);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
     var bank = this.vel.x * 5;
-    this.clamp(bank, -this.bank_limit, this.bank_limit);
+    clamp(bank, -this.bank_limit, this.bank_limit);
     this.mesh.rotation.set(0, bank, 0);
   }
 
@@ -54,8 +114,18 @@ class Player{
     console.log("bam");
   }
 
-  clamp(a, upper_limit, lower_limit){
-    return Math.max(Math.min(a, upper_limit), lower_limit);
+  deletePlayer(){
+    //clean up flames
+    for(let i =0; i<this.child_array.length; i++){
+        this.child_array[i].deleteFlame();
+    }
+    this.child_array.length = 0;
+
+    scene.remove(this.mesh);
+    //safeguard
+    if(this.geometry) this.geometry.dispose();
+    if(this.material) this.material.dispose();
+    if(this.texture) this.texture.dispose();
   }
 
 }

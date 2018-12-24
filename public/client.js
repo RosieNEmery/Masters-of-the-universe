@@ -7,12 +7,8 @@ const ASPECT = 50;
 const FAR_CLIPPING = 1000;
 const NEAR_CLIPPING = 0.1;
 
-var u_player_selection = 1.0;
-var u_flame_selection = 1.0;
-var flame_on = false;
-var flame_mult = 1.5;
-var on_timer;
-var off_timer;
+//you can change the name if you want
+var party_bus = new EventBus();
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0x000000);
@@ -29,76 +25,17 @@ scene.add(camera);
 
 document.body.appendChild(renderer.domElement);
 
-//Create player shader
-let Player_vertShader = document.querySelector('#vertexshader');
-let Player_fragShader = document.querySelector('#fragmentshader');
-
+//maybe should be passed to objects??////////////////////////////
 const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
 texture.wrapS = THREE.RepeatWrapping;
 
-const player_uniforms = {
-		texture : {type: 't', value: texture},
-		u_selection: {type: 'f', value: u_player_selection}
-};
+var enemy_array = [];
 
-//custom material
-const player_material = new THREE.ShaderMaterial({
-		uniforms: player_uniforms,
-		vertexShader:   Player_vertShader.textContent,
-		fragmentShader: Player_fragShader.textContent,
-		side: THREE.DoubleSide,
-		//transparent: true
-});
-
-//Create flame shader
-let Flame_vertShader = document.querySelector('#flame_vertexshader');
-let Flame_fragShader = document.querySelector('#flame_fragmentshader');
-
-const flame_uniforms = {
-		texture : {type: 't', value: texture},
-		u_selection: {type: 'f', value: u_flame_selection},
-		u_flame_mult: {type: 'f', value: flame_mult}
-};
-
-//custom material
-const flame_material = new THREE.ShaderMaterial({
-		uniforms: flame_uniforms,
-		vertexShader:   Flame_vertShader.textContent,
-		fragmentShader: Flame_fragShader.textContent,
-		side: THREE.DoubleSide,
-		//transparent: true
-});
-
-//Add a player to the scene
-const player_geometry = new THREE.PlaneGeometry(1, 1, 2, 2);
-const player_mesh = new THREE.Mesh(player_geometry, player_material);
-let player_updater = new Player(player_mesh, key_state);
-
-const flame_geometry = new THREE.PlaneGeometry(0.4, 0.4, 1, 1);
-const flame_01 = new THREE.Mesh(flame_geometry, flame_material);
-const flame_02 = flame_01.clone();
-flame_01.position.set(-0.25, -0.34, 0.01);
-flame_02.position.set(0.25, -0.34, 0.01);
-
-scene.add(player_mesh);
-player_mesh.add(flame_01);
-player_mesh.add(flame_02);
-
-setInterval(function() {
-	u_player_selection += 1;
-	if(u_player_selection > 16)
-		u_player_selection = 1;
-
-		player_material.uniforms.u_selection.value = u_player_selection;
-}, 50);
-
-setInterval(function() {
-		u_flame_selection += 1;
-		if(u_flame_selection > 16)
-			u_flame_selection = 1;
-
-			flame_material.uniforms.u_selection.value = u_flame_selection;
-	}, 50);
+let player = new Player(scene, key_state);
+//scene, sprite to use, enemy id, and event bus
+let enemy = new Enemy(scene, 1, enemy_array.length, party_bus);
+//Maybe have an enemy container, handle movement too //////////////////////////
+enemy_array.push(enemy);
 
 attachEventListeners();
 //window resize event
@@ -106,6 +43,8 @@ function attachEventListeners(){
 		window.addEventListener("resize", this.onWindowResize.bind(this), false);
 		window.addEventListener("keydown", this.onKeyDown.bind(this), true);
 		window.addEventListener("keyup", this.onKeyUp.bind(this), true);
+
+		party_bus.subscribe("deleted", this.onDelete.bind(this));
 }
 
 function onWindowResize(event){
@@ -122,13 +61,37 @@ function onKeyUp(event){
 	key_state[event.keyCode || event.which] = false;
 }
 
+function onDelete(id){
+	if(enemy_array.length > 1) {
+		for(var i = 0; i < enemy_array.length; i++){
+	   if(enemy_array[i].getID() === id) {
+	     enemy_array.splice(i, 1);
+	   }
+		}
+	}
+	else {
+		enemy_array = [];
+	}
+}
+
 // Start the render loop
 function render()
 {
   requestAnimationFrame(render);
-	player_updater.update();
-  //controls.update();
+	player.update();
+	if(enemy_array.length > 0) {
+		for(let i=0; i<enemy_array.length; i++){
+			enemy_array[i].update();
+		}
+	}
   renderer.render(scene, camera);
+}
+
+function clearScene(){
+	player.deletePlayer();
+	while(scene.children.length > 0){
+    scene.remove(scene.children[0]);
+	}
 }
 
 

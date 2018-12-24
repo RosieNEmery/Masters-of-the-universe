@@ -9,6 +9,7 @@
     <script src="./shader/vertex.js" type="x-shader/x-vertex" id="vertexshader">
       precision highp float;
 
+      uniform int u_sprite;
       uniform float u_selection;
       varying vec2 vUv;
 
@@ -17,7 +18,7 @@
         float x_size = 16.0;
         float y_size = 16.0;
 
-        float uv_y = ((1.0 - vUv.y)/y_size) + (1.0 - 1.0/y_size);
+        float uv_y = ((1.0 - vUv.y)/y_size) + (1.0 - 1.0/y_size) - (float(u_sprite) * 1.0/16.0);
         float uv_x = (vUv.x/x_size) + ((1.0/x_size) * u_selection);
         vUv = vec2(uv_x, uv_y);
 
@@ -93,7 +94,11 @@
     <script src="/three.js"></script>
 
     <script src="/utils.js"></script>
+    <script src="/EventBus.js"></script>
+
+    <script src="/Flame.js"></script>
     <script src="/Player.js"></script>
+    <script src="/Enemy.js"></script>
 
     <script src="/client.js"></script>
 
