@@ -10,7 +10,7 @@ class Player{
 
     this.pos = new THREE.Vector3(0, 0, 0);
     this.vel = new THREE.Vector3(0, 0, 0);
-    this.bullets = new BulletStack();
+    this.bullets = new BulletStack(scene);
 
     this.speed_limit = 0.1;
     this.bank_limit = 0.1;
