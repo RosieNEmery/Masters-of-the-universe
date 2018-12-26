@@ -39,7 +39,7 @@ class Enemy{
     		uniforms: enemy_uniforms,
     		vertexShader:   Enemy_vertShader.textContent,
     		fragmentShader: Enemy_fragShader.textContent,
-    		//transparent: true
+    		transparent: true
     });
 
     setInterval(function() {
@@ -50,7 +50,7 @@ class Enemy{
     		enemy_material.uniforms.u_selection.value = u_sprite_selection;
     }, 50);
 
-    const enemy_geometry = new THREE.PlaneGeometry(1, 1, 2, 2);
+    const enemy_geometry = new THREE.PlaneBufferGeometry(1, 1, 2, 2);
     this.mesh = new THREE.Mesh(enemy_geometry, enemy_material);
 
     this.createFlames();

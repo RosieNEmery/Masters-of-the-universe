@@ -35,7 +35,7 @@ class Flame{
     });
 
     //create geo and move mesh to position
-    const flame_geometry = new THREE.PlaneGeometry(0.4, 0.4, 1, 1);
+    const flame_geometry = new THREE.PlaneBufferGeometry(0.4, 0.4, 1, 1);
     this.mesh = new THREE.Mesh(flame_geometry, this.material);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
 

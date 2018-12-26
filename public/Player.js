@@ -39,7 +39,6 @@ class Player{
     		uniforms: player_uniforms,
     		vertexShader:   Player_vertShader.textContent,
     		fragmentShader: Player_fragShader.textContent,
-    		side: THREE.DoubleSide,
     		transparent: true
     });
 
@@ -54,7 +53,7 @@ class Player{
     }, 50);
 
     //add mesh to scene
-    const player_geometry = new THREE.PlaneGeometry(1, 1, 2, 2);
+    const player_geometry = new THREE.PlaneBufferGeometry(1, 1, 2, 2);
     this.mesh = new THREE.Mesh(player_geometry, player_material);
     scene.add(this.mesh);
   }
