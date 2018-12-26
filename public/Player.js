@@ -110,15 +110,15 @@ class Player{
 
     if(this.global_key_states[32]){
       this.shoot();
-    }
-
-    if(this.global_key_states[75]){
-      this.bullets.print();
+      this.global_key_states[32] = 0;
     }
   }
 
   shoot(){
-    this.bullets.shoot(new THREE.Vector3(this.pos.x, this.pos.y, this.pos.z));
+    let x_offset = 0.27;
+    let y_offset = 0.4;
+    this.bullets.shoot(new THREE.Vector3(this.pos.x + x_offset, this.pos.y + y_offset, this.pos.z));
+    this.bullets.shoot(new THREE.Vector3(this.pos.x - x_offset, this.pos.y + y_offset, this.pos.z));
   }
 
   deletePlayer(){
