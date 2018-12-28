@@ -1,5 +1,5 @@
 class FXInstancer{
-  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale){
+  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop){
     //set class attributes
     this.scene = scene;
     this.tex_offset = tex_offset;
@@ -8,6 +8,7 @@ class FXInstancer{
     this.max_instances = max_instances;
     this.quad_size = quad_size;
     this.uv_scale = uv_scale;
+    this.loop = loop;
 
     //init stacks
     this.pos_stack = [];
@@ -52,7 +53,8 @@ class FXInstancer{
     texture.wrapS = THREE.RepeatWrapping;
     const fx_uniforms = {
       u_texture: {type: 't', value: texture},
-      u_sprite: {type: 'i', value: this.tex_offset}
+      u_sprite: {type: 'i', value: this.tex_offset},
+      u_uv_scale: {type: 'f', value: this.uv_scale}
     };
     const material = new THREE.RawShaderMaterial({
       uniforms: fx_uniforms,
@@ -87,9 +89,9 @@ class FXInstancer{
       if(this.age_stack[i] <= this.lifetime){
         let new_pos = new THREE.Vector3(0, 0, 0);
         new_pos.addVectors(this.pos_stack[i], this.velocity);
-        this.new_pos_stack.push(new_pos);
-        this.new_age_stack.push(this.age_stack[i]);
-        this.new_tex_stack.push(this.tex_stack[i]);
+        new_pos_stack.push(new_pos);
+        new_age_stack.push(this.age_stack[i]);
+        new_tex_stack.push(this.tex_stack[i]);
       }
     }
     this.pos_stack = new_pos_stack;
@@ -97,7 +99,7 @@ class FXInstancer{
     this.tex_stack = new_tex_stack;
 
     //update buffers to reflect changes to the stacks
-    for(let i = 0; i < this,pos_stack.length; i++){
+    for(let i = 0; i < this.pos_stack.length; i++){
       this.pos_attrib_arr.setXYZ(i,
                                  this.pos_stack[i].x,
                                  this.pos_stack[i].y,
@@ -114,7 +116,13 @@ class FXInstancer{
   updateTextureOffsets(){
     for(let i = 0; i < this.tex_stack.length; i++){
       let new_tex = this.tex_stack[i];
-      new_tex = (new_tex + 1)%16;
+      if(this.loop){
+        new_tex = (new_tex + 1)%16;
+      }
+      else{
+        new_tex += 1;
+        new_tex = Math.min(15, new_tex);
+      }
       this.tex_stack[i] = new_tex;
       this.tex_attrib_arr.setX(i, new_tex);
     }

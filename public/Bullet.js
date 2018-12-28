@@ -12,7 +12,7 @@ class BulletStack{
     let tex_offsets = [];
 
     let num_instances = 1000;
-    
+
 
     this.buffer_geo = new THREE.PlaneBufferGeometry(0.07, 0.07);
     this.geo = new THREE.InstancedBufferGeometry();

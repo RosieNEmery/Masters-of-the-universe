@@ -11,7 +11,7 @@ class Player{
     this.pos = new THREE.Vector3(0, 0, 0);
     this.vel = new THREE.Vector3(0, 0, 0);
     this.bullets = new BulletStack(scene);
-    this.rand_fx = new FXInstancer(scene, 5, 100, new THREE.Vector3(0, 0, 0), 1000, 0.5, 1);
+    this.rand_fx = new FXInstancer(scene, 5, 100, new THREE.Vector3(0, 0, 0), 1000, 0.8, 1, false);
 
     this.speed_limit = 0.1;
     this.bank_limit = 0.1;
@@ -78,6 +78,7 @@ class Player{
     this.keyHandler();
 
     this.bullets.update();
+    this.rand_fx.update();
 
     this.pos.add(this.vel);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
@@ -111,6 +112,11 @@ class Player{
     if(this.global_key_states[32]){
       this.shoot();
       this.global_key_states[32] = 0;
+    }
+
+    if(this.global_key_states[75]){;
+      this.rand_fx.emitInstance(new THREE.Vector3(0, 0, 0.1));
+      this.global_key_states[75] = 0;
     }
   }
 
