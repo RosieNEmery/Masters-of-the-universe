@@ -134,13 +134,13 @@
     <script src="./shader/vertex.js" type="x-shader/x-vertex" id="fx_vert_shader">
       precision highp float;
 
-      uniform mat4 modelViewMatrix;
-		  uniform mat4 projectionMatrix;
+      //uniform mat4 modelViewMatrix;
+		  //uniform mat4 projectionMatrix;
       uniform int u_sprite;
       uniform float u_uv_scale;
 
-      attribute vec2 uv;
-      attribute vec3 position;
+      //attribute vec2 uv;
+      //attribute vec3 position;
       attribute vec3 pos_offset;
       attribute float tex_offset;
 
@@ -173,7 +173,6 @@
 
     void main() {
       gl_FragColor = texture2D(u_texture, vUv);
-      
     }
     </script>
 

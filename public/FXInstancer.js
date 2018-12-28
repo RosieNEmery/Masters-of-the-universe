@@ -56,7 +56,8 @@ class FXInstancer{
       u_sprite: {type: 'i', value: this.tex_offset},
       u_uv_scale: {type: 'f', value: this.uv_scale}
     };
-    const material = new THREE.RawShaderMaterial({
+    //--------* took out raw shader so don't have to pass attribs and camera persp uniforms *--------\\
+    const material = new THREE.ShaderMaterial({
       uniforms: fx_uniforms,
       vertexShader: fx_vert_shader.textContent,
       fragmentShader: fx_frag_shader.textContent,
@@ -65,6 +66,8 @@ class FXInstancer{
 
     //finally create the mesh obj and add it to the Scene
     this.mesh = new THREE.Mesh(this.geo, material);
+    //--------* set the render order to fix transparency *--------\\
+    this.mesh.renderOrder = 1;
     this.scene.add(this.mesh);
     }
 
