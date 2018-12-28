@@ -1,5 +1,13 @@
+class Instance{
+  constructor(pos, age, tex){
+    this.pos = pos;
+    this.age = age;
+    this.tex = tex;
+  }
+}
+
 class FXInstancer{
-  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop){
+  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop, tex_interval, flip_quad){
     //set class attributes
     this.scene = scene;
     this.tex_offset = tex_offset;
@@ -9,11 +17,11 @@ class FXInstancer{
     this.quad_size = quad_size;
     this.uv_scale = uv_scale;
     this.loop = loop;
+    this.tex_interval = tex_interval;
+    this.flip_quad = flip_quad
 
     //init stacks
-    this.pos_stack = [];
-    this.age_stack = [];
-    this.tex_stack = [];
+    this.instance_stack = [];
 
     //build the mesh
     this.createMesh();
@@ -21,7 +29,10 @@ class FXInstancer{
 
   createMesh(){
     //set up buffer geo
-    this.buffer_geo = new THREE.PlaneBufferGeometry(this.quad_size, this.quad_size);
+    this.buffer_geo = new THREE.PlaneBufferGeometry(this.quad_size.x, this.quad_size.y);
+    if(this.flip_quad){
+      this.buffer_geo.rotateZ(3.1415);
+    }
     this.geo = new THREE.InstancedBufferGeometry();
     this.geo.index = this.buffer_geo.index;
     this.geo.attributes.position = this.buffer_geo.attributes.position;
@@ -43,7 +54,7 @@ class FXInstancer{
 
     //set update interval for texture offsets
     let t = this;
-    setInterval(function(){t.updateTextureOffsets()}, 50);
+    setInterval(function(){t.updateTextureOffsets()}, this.tex_interval);
 
     //set up shader
     let fx_vert_shader = document.querySelector('#fx_vert_shader');
@@ -72,53 +83,49 @@ class FXInstancer{
     }
 
   emitInstance(origin){
-    this.pos_stack.push(origin);
-    this.age_stack.push(0);
-    this.tex_stack.push(0);
+    this.instance_stack.push(new Instance(origin, 0, 0));
+    //this.update();
   }
 
   update(){
     //init new stacks
-    let new_pos_stack = [];
-    let new_age_stack = [];
-    let new_tex_stack = [];
 
     //update temp stacks with non-dead instances
-    for(let i = 0; i < this.pos_stack.length; i++){
+    for(let i = 0; i < this.instance_stack.length; i++){
       if(i > this.max_instances){
         break;
       }
-      this.age_stack[i] += 1;
-      if(this.age_stack[i] <= this.lifetime){
+      //this.age_stack[i] += 1;
+      if(this.instance_stack[i].age <= this.lifetime){
         let new_pos = new THREE.Vector3(0, 0, 0);
-        new_pos.addVectors(this.pos_stack[i], this.velocity);
-        new_pos_stack.push(new_pos);
-        new_age_stack.push(this.age_stack[i]);
-        new_tex_stack.push(this.tex_stack[i]);
+        new_pos.addVectors(this.instance_stack[i].pos, this.velocity);
+        this.instance_stack[i].pos = new_pos;
       }
     }
-    this.pos_stack = new_pos_stack;
-    this.age_stack = new_age_stack;
-    this.tex_stack = new_tex_stack;
 
     //update buffers to reflect changes to the stacks
-    for(let i = 0; i < this.pos_stack.length; i++){
+    for(let i = 0; i < this.instance_stack.length; i++){
       this.pos_attrib_arr.setXYZ(i,
-                                 this.pos_stack[i].x,
-                                 this.pos_stack[i].y,
-                                 this.pos_stack[i].z
+                                 this.instance_stack[i].pos.x,
+                                 this.instance_stack[i].pos.y,
+                                 this.instance_stack[i].pos.z
                                );
-      this.tex_attrib_arr.setX(1, this.tex_stack[i]);
+      this.tex_attrib_arr.setX(1, this.instance_stack[i].tex);
     }
     //set flags on geo and buffers
-    this.geo.maxInstancedCount = this.pos_stack.length;
+    this.geo.maxInstancedCount = this.instance_stack.length;
     this.pos_attrib_arr.needsUpdate = true;
     this.tex_attrib_arr.needsUpdate = true;
   }
 
   updateTextureOffsets(){
-    for(let i = 0; i < this.tex_stack.length; i++){
-      let new_tex = this.tex_stack[i];
+    for(let i = 0; i < this.instance_stack.length; i++){
+      this.instance_stack[i].age += 1;
+      if(this.instance_stack[i].age > this.lifetime){
+        this.instance_stack.splice(i, 1);
+        continue;
+      }
+      let new_tex = this.instance_stack[i].tex;
       if(this.loop){
         new_tex = (new_tex + 1)%16;
       }
@@ -126,7 +133,7 @@ class FXInstancer{
         new_tex += 1;
         new_tex = Math.min(15, new_tex);
       }
-      this.tex_stack[i] = new_tex;
+      this.instance_stack[i].tex = new_tex;
       this.tex_attrib_arr.setX(i, new_tex);
     }
   }

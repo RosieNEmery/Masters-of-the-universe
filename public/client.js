@@ -20,7 +20,7 @@ const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(ASPECT, WIDTH / HEIGHT, NEAR_CLIPPING, FAR_CLIPPING);
 camera.lookAt(new THREE.Vector3(0,0,0));
-camera.position.set(0, 0, 5);
+camera.position.set(0, 0, 7);
 scene.add(camera);
 
 document.body.appendChild(renderer.domElement);
@@ -36,6 +36,9 @@ let player = new Player(scene, key_state);
 let enemy = new Enemy(scene, 1, enemy_array.length, party_bus);
 //Maybe have an enemy container, handle movement too //////////////////////////
 enemy_array.push(enemy);
+
+let env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.4, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false);
+setInterval(function(){env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 10, 5, (Math.random()-0.5) * 10));}, 25 );
 
 attachEventListeners();
 //window resize event
@@ -79,6 +82,8 @@ function onDelete(id){
 function render()
 {
   requestAnimationFrame(render);
+
+	env_fx.update();
 	player.update();
 	if(enemy_array.length > 0) {
 		for(let i=0; i<enemy_array.length; i++){
