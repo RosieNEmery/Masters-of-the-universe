@@ -11,6 +11,7 @@ class Player{
     this.pos = new THREE.Vector3(0, 0, 0);
     this.vel = new THREE.Vector3(0, 0, 0);
     this.bullets = new BulletStack(scene);
+    this.rand_fx = new FXInstancer(scene, 5, 100, new THREE.Vector3(0, 0, 0), 1000, 0.5, 1);
 
     this.speed_limit = 0.1;
     this.bank_limit = 0.1;
