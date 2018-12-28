@@ -5,6 +5,7 @@ class Flame{
   constructor(scene, pos, parent){
     //create Flame
     this.pos = new THREE.Vector3(pos.x, pos.y, pos.z);
+    this.parent = parent;
 
     this.flame_mult = 1.5;
 
@@ -33,9 +34,9 @@ class Flame{
     		fragmentShader: Flame_fragShader.textContent,
     		transparent: true
     });
-
+    this.material.depthWrite = false;
     //create geo and move mesh to position
-    const flame_geometry = new THREE.PlaneBufferGeometry(0.4, 0.4, 1, 1);
+    const flame_geometry = new THREE.PlaneBufferGeometry(0.5, 0.5, 1, 1);
     this.mesh = new THREE.Mesh(flame_geometry, this.material);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
 

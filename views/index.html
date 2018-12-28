@@ -49,14 +49,14 @@
         vUv = uv;
         float sprite_size = 16.0;
         float sprite_fraction = 1.0/16.0;
-        float scale = 0.3 * u_flame_mult;
+        float scale = 0.5 * u_flame_mult;
 
         float uv_y = vUv.y - 0.5;
         uv_y *= scale;
         uv_y += 0.5;
 
         float uv_x = vUv.x - 0.5;
-        uv_x *= scale;
+        uv_x *= 0.5;
         uv_x += 0.5;
 
         uv_y = ((1.0 - uv_y)/sprite_size) + (1.0 - sprite_fraction);
@@ -65,7 +65,7 @@
 
         uv_x = (uv_x/sprite_size) + (sprite_fraction * u_selection);
 
-        vUv = vec2(uv_x, uv_y + 0.009);
+        vUv = vec2(uv_x, uv_y);
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
       }
@@ -173,7 +173,7 @@
 
     void main() {
       gl_FragColor = texture2D(u_texture, vUv);
-      
+
     }
     </script>
 

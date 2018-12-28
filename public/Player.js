@@ -61,8 +61,8 @@ class Player{
 
   createFlames(){
     //creates Flame objects
-    this.flame_left = new Flame(scene, new THREE.Vector3(-0.25, -0.34, 0.01), this);
-    this.flame_right = new Flame(scene, new THREE.Vector3(0.25, -0.34, 0.01), this);
+    this.flame_left = new Flame(scene, new THREE.Vector3(-0.25, -0.14, 0.01), this);
+    this.flame_right = new Flame(scene, new THREE.Vector3(0.25, -0.14, 0.01), this);
 
     //parent to player
     this.addChild(this.flame_left);
@@ -81,6 +81,8 @@ class Player{
     this.rand_fx.update();
 
     this.pos.add(this.vel);
+    this.flame_left.setFlameMult((this.vel.y * -3) + 1);
+    this.flame_right.setFlameMult((this.vel.y * -3) + 1);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
     var bank = this.vel.x * 5;
     clamp(bank, -this.bank_limit, this.bank_limit);
