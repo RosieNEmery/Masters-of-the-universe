@@ -10,8 +10,8 @@ class Player{
 
     this.pos = new THREE.Vector3(0, 0, 0);
     this.vel = new THREE.Vector3(0, 0, 0);
-    this.bullets = new FXInstancer(scene, 9, 1000, new THREE.Vector3(0, 0.1, 0), 1000, new THREE.Vector2(1, 1), 1, true, 50, true);
-    this.bullet_fx = new FXInstancer(scene, 5, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(0.7, 0.7), 1, false, 50, false);
+    this.bullets = new FXInstancer(scene, 9, 1000, new THREE.Vector3(0, 0.1, 0), 1000, new THREE.Vector2(1, 1), 1, true, 50, true, 1);
+    this.bullet_fx = new FXInstancer(scene, 5, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(0.7, 0.7), 1, false, 50, false, 1);
     this.active_cannon = 0;
 
     this.speed_limit = 0.1;
@@ -21,13 +21,12 @@ class Player{
     this.createMesh();
     this.createFlames();
   }
-
   createMesh(){
     //Create player shader
     let Player_vertShader = document.querySelector('#vertexshader');
     let Player_fragShader = document.querySelector('#fragmentshader');
 
-    const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
+    const texture = new THREE.TextureLoader().load('img/contact_out.png');
     texture.wrapS = THREE.RepeatWrapping;
 
     const player_uniforms = {

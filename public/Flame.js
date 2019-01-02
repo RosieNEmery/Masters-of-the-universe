@@ -13,11 +13,11 @@ class Flame{
   }
 
   createMesh(){
-    let flame_selection = 1.0;
+    let flame_selection = Math.floor(Math.random() * 16);
     const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
     texture.wrapS = THREE.RepeatWrapping;
 
-    //Create flame shader
+    //Create flame shaderD
     let Flame_vertShader = document.querySelector('#flame_vertexshader');
     let Flame_fragShader = document.querySelector('#flame_fragmentshader');
 
@@ -36,7 +36,7 @@ class Flame{
     });
     this.material.depthWrite = false;
     //create geo and move mesh to position
-    const flame_geometry = new THREE.PlaneBufferGeometry(0.5, 0.5, 1, 1);
+    const flame_geometry = new THREE.PlaneBufferGeometry(0.5, 0.4, 1, 1);
     this.mesh = new THREE.Mesh(flame_geometry, this.material);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
 

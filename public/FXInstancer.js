@@ -7,7 +7,7 @@ class Instance{
 }
 
 class FXInstancer{
-  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop, tex_interval, flip_quad){
+  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop, tex_interval, flip_quad, render_order){
     //set class attributes
     this.scene = scene;
     this.tex_offset = tex_offset;
@@ -18,7 +18,8 @@ class FXInstancer{
     this.uv_scale = uv_scale;
     this.loop = loop;
     this.tex_interval = tex_interval;
-    this.flip_quad = flip_quad
+    this.flip_quad = flip_quad;
+    this.render_order = render_order;
 
     //init stacks
     this.instance_stack = [];
@@ -78,12 +79,12 @@ class FXInstancer{
     //finally create the mesh obj and add it to the Scene
     this.mesh = new THREE.Mesh(this.geo, material);
     //--------* set the render order to fix transparency *--------\\
-    this.mesh.renderOrder = 1;
+    this.mesh.renderOrder = this.render_order;
     this.scene.add(this.mesh);
     }
 
   emitInstance(origin){
-    this.instance_stack.push(new Instance(origin, 0, 0));
+    this.instance_stack.splice(0, 0, new Instance(origin, 0, 0));
     //this.update();
   }
 

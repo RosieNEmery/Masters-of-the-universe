@@ -8,6 +8,7 @@ const FAR_CLIPPING = 1000;
 const NEAR_CLIPPING = 0.1;
 
 //you can change the name if you want
+//nah, I like this name too :)
 var party_bus = new EventBus();
 
 const renderer = new THREE.WebGLRenderer();
@@ -37,8 +38,29 @@ let enemy = new Enemy(scene, 1, enemy_array.length, party_bus);
 //Maybe have an enemy container, handle movement too //////////////////////////
 enemy_array.push(enemy);
 
-let env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.4, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false);
+let env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.4, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 2);
+let col_fx = new FXInstancer(scene, 3, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(1, 1), 1, false, 50, false, 1);
 setInterval(function(){env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 10, 5, (Math.random()-0.5) * 10));}, 25 );
+
+function detectColisions(){
+	player_bullets = player.bullets.instance_stack;
+	for(let e = 0; e < enemy_array.length; e++){
+		let e_pos = enemy_array[e].pos;
+		for(let b = 0; b < player_bullets.length; b++){
+			let b_pos = player_bullets[b].pos;
+			let dx = e_pos.x - b_pos.x;
+			let dy = e_pos.y - b_pos.y;
+			let w = 0.5;
+			let h = 0.5;
+			if((Math.abs(dx) < w) && (Math.abs(dy) < h)){
+				let p = b_pos.clone();
+				//p.z -= 0.5;
+				col_fx.emitInstance(p);
+				player_bullets.splice(b, 1);
+			}
+		}
+	}
+}
 
 attachEventListeners();
 //window resize event
@@ -82,8 +104,9 @@ function onDelete(id){
 function render()
 {
   requestAnimationFrame(render);
-
+	detectColisions();
 	env_fx.update();
+	col_fx.update();
 	player.update();
 	if(enemy_array.length > 0) {
 		for(let i=0; i<enemy_array.length; i++){
