@@ -24,12 +24,8 @@ class Enemy{
     let Enemy_vertShader = document.querySelector('#vertexshader');
     let Enemy_fragShader = document.querySelector('#fragmentshader');
 
-    //look at passing texture to constructure so not loading multiple times
-    const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
-    texture.wrapS = THREE.RepeatWrapping;
-
     const enemy_uniforms = {
-    		texture : {type: 't', value: texture},
+    		texture : {type: 't', value: SPRITE_SHEET_01},
     		u_selection: {type: 'f', value: u_sprite_selection},
         u_sprite: {type:'i', value: this.select}
     };

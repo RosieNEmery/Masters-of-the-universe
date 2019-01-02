@@ -60,11 +60,9 @@ class FXInstancer{
     //set up shader
     let fx_vert_shader = document.querySelector('#fx_vert_shader');
     let fx_frag_shader = document.querySelector('#fx_frag_shader');
-    //probably shouldnt be loading a new texture each time, but reference a master texture
-    let texture = new THREE.TextureLoader().load('img/contact_out_copy.png')
-    texture.wrapS = THREE.RepeatWrapping;
+
     const fx_uniforms = {
-      u_texture: {type: 't', value: texture},
+      u_texture: {type: 't', value: SPRITE_SHEET_01},
       u_sprite: {type: 'i', value: this.tex_offset},
       u_uv_scale: {type: 'f', value: this.uv_scale}
     };
@@ -84,6 +82,7 @@ class FXInstancer{
     }
 
   emitInstance(origin){
+    
     this.instance_stack.splice(0, 0, new Instance(origin, 0, 0));
     //this.update();
   }
@@ -124,8 +123,9 @@ class FXInstancer{
       this.instance_stack[i].age += 1;
       if(this.instance_stack[i].age > this.lifetime){
         this.instance_stack.splice(i, 1);
-        continue;
       }
+    }
+    for(let i = 0; i < this.instance_stack.length; i++){
       let new_tex = this.instance_stack[i].tex;
       if(this.loop){
         new_tex = (new_tex + 1)%16;

@@ -27,8 +27,6 @@ scene.add(camera);
 document.body.appendChild(renderer.domElement);
 
 //maybe should be passed to objects??////////////////////////////
-const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
-texture.wrapS = THREE.RepeatWrapping;
 
 var enemy_array = [];
 
@@ -39,7 +37,7 @@ let enemy = new Enemy(scene, 1, enemy_array.length, party_bus);
 enemy_array.push(enemy);
 
 let env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.4, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 2);
-let col_fx = new FXInstancer(scene, 3, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(1, 1), 1, false, 50, false, 1);
+let col_fx = new FXInstancer(scene, 3, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(1.2, 1.2), 1, false, 50, false, 1);
 setInterval(function(){env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 10, 5, (Math.random()-0.5) * 10));}, 25 );
 
 function detectColisions(){

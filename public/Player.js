@@ -26,11 +26,9 @@ class Player{
     let Player_vertShader = document.querySelector('#vertexshader');
     let Player_fragShader = document.querySelector('#fragmentshader');
 
-    const texture = new THREE.TextureLoader().load('img/contact_out.png');
-    texture.wrapS = THREE.RepeatWrapping;
 
     const player_uniforms = {
-    		texture : {type: 't', value: texture},
+    		texture : {type: 't', value: SPRITE_SHEET_01},
     		u_selection: {type: 'f', value: u_player_selection},
         u_sprite: {type: 'i', value: 0}
     };
