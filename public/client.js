@@ -57,6 +57,9 @@ function detectColisions(){
 				//p.z -= 0.5;
 				col_fx.emitInstance(p);
 				player_bullets.splice(b, 1);
+				enemy_array[e].deleteEnemy();
+				enemy_array.splice(e, 1);
+				break;
 			}
 		}
 	}
