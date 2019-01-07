@@ -7,7 +7,7 @@ class Instance{
 }
 
 class FXInstancer{
-  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop, tex_interval, flip_quad, render_order){
+  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop, tex_interval, flip_quad, render_order, col_mult){
     //set class attributes
     this.scene = scene;
     this.tex_offset = tex_offset;
@@ -20,6 +20,7 @@ class FXInstancer{
     this.tex_interval = tex_interval;
     this.flip_quad = flip_quad;
     this.render_order = render_order;
+    this.col_mult = col_mult;
 
     //init stacks
     this.instance_stack = [];
@@ -64,7 +65,8 @@ class FXInstancer{
     const fx_uniforms = {
       u_texture: {type: 't', value: SPRITE_SHEET_01},
       u_sprite: {type: 'i', value: this.tex_offset},
-      u_uv_scale: {type: 'f', value: this.uv_scale}
+      u_uv_scale: {type: 'f', value: this.uv_scale},
+      u_col_mult: {type: 'f', value: this.col_mult}
     };
     //--------* took out raw shader so don't have to pass attribs and camera persp uniforms *--------\\
     const material = new THREE.ShaderMaterial({
@@ -82,7 +84,7 @@ class FXInstancer{
     }
 
   emitInstance(origin){
-    
+
     this.instance_stack.splice(0, 0, new Instance(origin, 0, 0));
     //this.update();
   }

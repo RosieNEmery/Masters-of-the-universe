@@ -36,9 +36,13 @@ let enemy = new Enemy(scene, 1, enemy_array.length, party_bus);
 //Maybe have an enemy container, handle movement too //////////////////////////
 enemy_array.push(enemy);
 
-let env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.4, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 2);
-let col_fx = new FXInstancer(scene, 3, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(1.2, 1.2), 1, false, 50, false, 1);
-setInterval(function(){env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 10, 5, (Math.random()-0.5) * 10));}, 25 );
+let fg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.6, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 2, 1.0);
+let mg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.5, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 2, 0.7);
+let bg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.4, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 2, 0.4);
+let col_fx = new FXInstancer(scene, 3, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(1.2, 1.2), 1, false, 50, false, 1, 1.0);
+setInterval(function(){fg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 10, 10, ((Math.random()-0.5) * 10)));}, 200 );
+setInterval(function(){mg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 20, 10, ((Math.random()-0.5) * 10)-10));}, 100 );
+setInterval(function(){bg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 40, 10, ((Math.random()-0.5) * 10)-20));}, 50 );
 
 function detectColisions(){
 	player_bullets = player.bullets.instance_stack;
@@ -106,7 +110,9 @@ function render()
 {
   requestAnimationFrame(render);
 	detectColisions();
-	env_fx.update();
+	bg_env_fx.update();
+	mg_env_fx.update();
+	fg_env_fx.update();
 	col_fx.update();
 	player.update();
 	if(enemy_array.length > 0) {
