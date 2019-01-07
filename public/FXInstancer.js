@@ -7,7 +7,7 @@ class Instance{
 }
 
 class FXInstancer{
-  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop, tex_interval, flip_quad, render_order, col_mult){
+  constructor(scene, tex_offset, lifetime, velocity, max_instances, quad_size, uv_scale, loop, tex_interval, flip_quad, col_mult){
     //set class attributes
     this.scene = scene;
     this.tex_offset = tex_offset;
@@ -19,7 +19,6 @@ class FXInstancer{
     this.loop = loop;
     this.tex_interval = tex_interval;
     this.flip_quad = flip_quad;
-    this.render_order = render_order;
     this.col_mult = col_mult;
 
     //init stacks
@@ -73,13 +72,12 @@ class FXInstancer{
       uniforms: fx_uniforms,
       vertexShader: fx_vert_shader.textContent,
       fragmentShader: fx_frag_shader.textContent,
-      transparent: true
+      transparent: true,
+      depthFunc: THREE.AlwaysDepth
     });
 
     //finally create the mesh obj and add it to the Scene
     this.mesh = new THREE.Mesh(this.geo, material);
-    //--------* set the render order to fix transparency *--------\\
-    this.mesh.renderOrder = this.render_order;
     this.scene.add(this.mesh);
     }
 

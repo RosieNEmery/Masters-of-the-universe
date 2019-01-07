@@ -2,10 +2,11 @@
 //flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
 
 class Enemy{
-  constructor(scene, select, id, event_bus){
+  constructor(scene, select, id, event_bus, text_index){
     this.select = select;
     this.id = id;
     this.event_bus = event_bus;
+    this.text_index = text_index;
 
     this.child_array = [];
 
@@ -35,7 +36,8 @@ class Enemy{
     		uniforms: enemy_uniforms,
     		vertexShader:   Enemy_vertShader.textContent,
     		fragmentShader: Enemy_fragShader.textContent,
-    		transparent: true
+    		transparent: true,
+        depthFunc: THREE.AlwaysDepth
     });
 
     setInterval(function() {
@@ -50,6 +52,7 @@ class Enemy{
     this.mesh = new THREE.Mesh(enemy_geometry, enemy_material);
 
     this.createFlames();
+    this.createText();
 
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
     this.mesh.rotation.z = Math.PI;
@@ -58,11 +61,39 @@ class Enemy{
   }
 
   createFlames(){
-    this.flame_left = new Flame(scene, new THREE.Vector3(-0.25, -0.34, 0.01), this);
-    this.flame_right = new Flame(scene, new THREE.Vector3(0.25, -0.34, 0.01), this);
+    this.flame_left = new Flame(scene, new THREE.Vector3(-0.45, 0.1, 0.01), this);
+    this.flame_right = new Flame(scene, new THREE.Vector3(0.45, 0.1, 0.01), this);
 
     this.addChild(this.flame_left);
     this.addChild(this.flame_right);
+  }
+
+  createText(){
+    let text_vert_shader = document.querySelector('#enemy_text_vert_shader');
+    let text_frag_shader = document.querySelector('#enemy_text_frag_shader');
+
+    const text_uniforms = {
+    		texture : {type: 't', value: SPRITE_SHEET_01},
+    		u_text_index: {type: 'f', value: this.text_index}
+    };
+
+    //custom material
+    const text_material = new THREE.ShaderMaterial({
+    		uniforms: text_uniforms,
+    		vertexShader:   text_vert_shader.textContent,
+    		fragmentShader: text_frag_shader.textContent,
+    		transparent: true,
+        depthFunc: THREE.AlwaysDepth
+    });
+
+    const text_geometry = new THREE.PlaneBufferGeometry(2.5, 2.5, 2, 2);
+    this.text_mesh = new THREE.Mesh(text_geometry, text_material);
+
+    this.text_mesh.rotateZ(-3.141/2);
+    this.text_mesh.translateX(0.7);
+    this.text_mesh.translateY(0.08);
+
+    this.mesh.add(this.text_mesh)
   }
 
   addChild(child){

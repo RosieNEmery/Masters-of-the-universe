@@ -30,9 +30,9 @@ class Flame{
     		uniforms: flame_uniforms,
     		vertexShader:   Flame_vertShader.textContent,
     		fragmentShader: Flame_fragShader.textContent,
-    		transparent: true
+    		transparent: true,
+        depthFunc: THREE.AlwaysDepth
     });
-    this.material.depthWrite = false;
     //create geo and move mesh to position
     const flame_geometry = new THREE.PlaneBufferGeometry(0.5, 0.4, 1, 1);
     this.mesh = new THREE.Mesh(flame_geometry, this.material);
