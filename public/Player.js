@@ -49,7 +49,7 @@ class Player{
     		u_player_selection = 1;
 
     		player_material.uniforms.u_selection.value = u_player_selection;
-    }, 10);
+    }, 50);
 
     //add mesh to scene
     const player_geometry = new THREE.PlaneBufferGeometry(1, 1, 2, 2);
