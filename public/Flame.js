@@ -5,6 +5,7 @@ class Flame{
   constructor(scene, pos, parent){
     //create Flame
     this.pos = new THREE.Vector3(pos.x, pos.y, pos.z);
+    this.parent = parent;
 
     this.flame_mult = 1.5;
 
@@ -12,16 +13,14 @@ class Flame{
   }
 
   createMesh(){
-    let flame_selection = 1.0;
-    const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
-    texture.wrapS = THREE.RepeatWrapping;
+    let flame_selection = Math.floor(Math.random() * 16);
 
-    //Create flame shader
+    //Create flame shaderD
     let Flame_vertShader = document.querySelector('#flame_vertexshader');
     let Flame_fragShader = document.querySelector('#flame_fragmentshader');
 
     const flame_uniforms = {
-    		texture : {type: 't', value: texture},
+    		texture : {type: 't', value: SPRITE_SHEET_01},
     		u_selection: {type: 'f', value: flame_selection},
     		u_flame_mult: {type: 'f', value: this.flame_mult}
     };
@@ -31,11 +30,11 @@ class Flame{
     		uniforms: flame_uniforms,
     		vertexShader:   Flame_vertShader.textContent,
     		fragmentShader: Flame_fragShader.textContent,
-    		transparent: true
+    		transparent: true,
+        depthFunc: THREE.AlwaysDepth
     });
-
     //create geo and move mesh to position
-    const flame_geometry = new THREE.PlaneBufferGeometry(0.4, 0.4, 1, 1);
+    const flame_geometry = new THREE.PlaneBufferGeometry(0.5, 0.4, 1, 1);
     this.mesh = new THREE.Mesh(flame_geometry, this.material);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
 

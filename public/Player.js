@@ -10,7 +10,9 @@ class Player{
 
     this.pos = new THREE.Vector3(0, 0, 0);
     this.vel = new THREE.Vector3(0, 0, 0);
-    this.bullets = new BulletStack(scene);
+    this.bullets = new FXInstancer(scene, 9, 1000, new THREE.Vector3(0, 0.1, 0), 1000, new THREE.Vector2(1, 1), 1, true, 50, true, 1.0);
+    this.bullet_fx = new FXInstancer(scene, 5, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(0.7, 0.7), 1, false, 50, false, 1.0);
+    this.active_cannon = 0;
 
     this.speed_limit = 0.1;
     this.bank_limit = 0.1;
@@ -19,17 +21,14 @@ class Player{
     this.createMesh();
     this.createFlames();
   }
-
   createMesh(){
     //Create player shader
     let Player_vertShader = document.querySelector('#vertexshader');
     let Player_fragShader = document.querySelector('#fragmentshader');
 
-    const texture = new THREE.TextureLoader().load('img/contact_out_copy.png');
-    texture.wrapS = THREE.RepeatWrapping;
 
     const player_uniforms = {
-    		texture : {type: 't', value: texture},
+    		texture : {type: 't', value: SPRITE_SHEET_01},
     		u_selection: {type: 'f', value: u_player_selection},
         u_sprite: {type: 'i', value: 0}
     };
@@ -39,7 +38,8 @@ class Player{
     		uniforms: player_uniforms,
     		vertexShader:   Player_vertShader.textContent,
     		fragmentShader: Player_fragShader.textContent,
-    		transparent: true
+    		transparent: true,
+        depthFunc: THREE.AlwaysDepth
     });
 
     //does switching of sprite along row
@@ -60,8 +60,8 @@ class Player{
 
   createFlames(){
     //creates Flame objects
-    this.flame_left = new Flame(scene, new THREE.Vector3(-0.25, -0.34, 0.01), this);
-    this.flame_right = new Flame(scene, new THREE.Vector3(0.25, -0.34, 0.01), this);
+    this.flame_left = new Flame(scene, new THREE.Vector3(-0.25, -0.14, 0.01), this);
+    this.flame_right = new Flame(scene, new THREE.Vector3(0.25, -0.14, 0.01), this);
 
     //parent to player
     this.addChild(this.flame_left);
@@ -77,8 +77,11 @@ class Player{
     this.keyHandler();
 
     this.bullets.update();
+    this.bullet_fx.update();
 
     this.pos.add(this.vel);
+    this.flame_left.setFlameMult((this.vel.y * -3) + 1);
+    this.flame_right.setFlameMult((this.vel.y * -3) + 1);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
     var bank = this.vel.x * 5;
     clamp(bank, -this.bank_limit, this.bank_limit);
@@ -111,13 +114,27 @@ class Player{
       this.shoot();
       this.global_key_states[32] = 0;
     }
+
+    if(this.global_key_states[75]){;
+      this.bullet_fx.emitInstance(new THREE.Vector3(0, 0, 0.1));
+      this.global_key_states[75] = 0;
+    }
   }
 
   shoot(){
     let x_offset = 0.27;
     let y_offset = 0.4;
-    this.bullets.shoot(new THREE.Vector3(this.pos.x + x_offset, this.pos.y + y_offset, this.pos.z));
-    this.bullets.shoot(new THREE.Vector3(this.pos.x - x_offset, this.pos.y + y_offset, this.pos.z));
+    if(this.active_cannon == 0){
+      this.bullets.emitInstance(new THREE.Vector3(this.pos.x + x_offset, this.pos.y + y_offset, this.pos.z));
+      this.bullet_fx.emitInstance(new THREE.Vector3(this.pos.x + x_offset, this.pos.y + y_offset + 0.1, this.pos.z+0.05));
+      this.active_cannon = 1;
+    }
+    else{
+      x_offset -= 0.05;
+      this.bullets.emitInstance(new THREE.Vector3(this.pos.x - x_offset, this.pos.y + y_offset, this.pos.z));
+      this.bullet_fx.emitInstance(new THREE.Vector3(this.pos.x - x_offset, this.pos.y + y_offset + 0.1, this.pos.z+0.05));
+      this.active_cannon = 0;
+    }
   }
 
   deletePlayer(){
