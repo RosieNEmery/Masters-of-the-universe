@@ -1,20 +1,16 @@
-
-//flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
-
 class Enemy{
-  constructor(scene, select, id, event_bus, text_index, pos){
+  constructor(select, id,text_index, pos){
     this.select = select;
     this.id = id;
-    this.event_bus = event_bus;
     this.text_index = text_index;
+
+    //make a constructor argument
+    this.life = 10;
 
     this.child_array = [];
 
     this.pos = pos;
     this.vel = new THREE.Vector3(0, -0.01, 0);
-
-    this.speed_limit = 0.1;
-    this.acc = 0.01;
 
     this.createMesh();
   }
@@ -61,8 +57,8 @@ class Enemy{
   }
 
   createFlames(){
-    this.flame_left = new Flame(scene, new THREE.Vector3(-0.45, 0.1, 0.01), this);
-    this.flame_right = new Flame(scene, new THREE.Vector3(0.45, 0.1, 0.01), this);
+    this.flame_left = new Flame(new THREE.Vector3(-0.45, 0.1, 0.01), this);
+    this.flame_right = new Flame(new THREE.Vector3(0.45, 0.1, 0.01), this);
 
     this.addChild(this.flame_left);
     this.addChild(this.flame_right);
@@ -106,24 +102,23 @@ class Enemy{
   }
 
   update(){
-    this.updatePos();
-
-    //update life, look at passing reference of player?
-  }
-
-  updatePos(){
     this.pos.add(this.vel);
 
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
 
     if(this.mesh.position.y < -2.5){
-      this.deleteEnemy();
+      return true;
+    } else {
+      return false;
     }
   }
 
-  deleteEnemy(){
-    this.event_bus.post("deleted", this.id);
+  updateLife(){
+    this.life -= 1;
+    return this.life;
+  }
 
+  deleteEnemy(){
     for(let i =0; i<this.child_array.length; i++){
         this.child_array[i].deleteFlame();
     }

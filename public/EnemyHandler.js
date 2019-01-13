@@ -1,11 +1,16 @@
 class EnemyHandler{
   constructor(){
     this.enemy_stack = [];
+
+    //for testing
+    let pos = new THREE.Vector3(0,2,0);
+    this.spawnEnemy(1, 3, pos);
   }
 
-  spawnEnemy(scene, select, id, event_bus, text_index, pos){
+  spawnEnemy(select, text_index, pos){
     let texture_select = Math.floor(Math.random(16));
-    let enemy = new Enemy(scene, 1, enemy_array.length, party_bus, 3, pos);
+    let enemy = new Enemy(1, this.enemy_stack.length, 3, pos);
+    this.enemy_stack.push(enemy);
   }
 
   removeEnemy(index){
@@ -15,20 +20,17 @@ class EnemyHandler{
 
   update(){
     for(let i = 0; i < this.enemy_stack.length; i++){
-      enemy_stack[i].update()
+      let deleted = this.enemy_stack[i].update();
+      if(deleted === true){
+        this.removeEnemy(i);
+      }
     }
   }
-/*
-  onDelete(id){
-  	if(enemy_array.length > 1) {
-  		for(var i = 0; i < enemy_array.length; i++){
-  	   if(enemy_array[i].getID() === id) {
-  	     enemy_array.splice(i, 1);
-  	   }
-  		}
-  	}
-  	else {
-  		enemy_array = [];
-  	}
-  }*/
+
+  updateEnemyLife(index){
+    let life = this.enemy_stack[index].updateLife();
+    if(life <= 0){
+      this.removeEnemy(index);
+    }
+  }
 }

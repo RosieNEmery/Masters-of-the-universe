@@ -2,7 +2,7 @@
 //flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
 
 class Player{
-  constructor(scene, global_key_states, camera){
+  constructor( global_key_states, camera){
     //for flames/stuff thats parented to it
     this.child_array = [];
 
@@ -62,8 +62,8 @@ class Player{
 
   createFlames(){
     //creates Flame objects
-    this.flame_left = new Flame(scene, new THREE.Vector3(-0.25, -0.14, 0.01), this);
-    this.flame_right = new Flame(scene, new THREE.Vector3(0.25, -0.14, 0.01), this);
+    this.flame_left = new Flame(new THREE.Vector3(-0.25, -0.14, 0.01), this);
+    this.flame_right = new Flame(new THREE.Vector3(0.25, -0.14, 0.01), this);
 
     //parent to player
     this.addChild(this.flame_left);

@@ -27,7 +27,8 @@ scene.add(camera);
 document.body.appendChild(renderer.domElement);
 
 //maybe should be passed to objects??////////////////////////////
-let player = new Player(scene, key_state);
+let player = new Player(key_state);
+let enemy_handler = new EnemyHandler();
 
 let fg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.6, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 1.0);
 let mg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.5, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 0.7);
@@ -37,9 +38,10 @@ setInterval(function(){fg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0
 setInterval(function(){mg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 30, 10, ((Math.random()-0.5) * 10)-10));}, 100 );
 setInterval(function(){bg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 50, 10, ((Math.random()-0.5) * 10)-20));}, 50 );
 
-/*
+
 function detectColisions(){
 	player_bullets = player.bullets.instance_stack;
+	enemy_array = enemy_handler.enemy_stack;
 	for(let e = 0; e < enemy_array.length; e++){
 		let e_pos = enemy_array[e].pos;
 		for(let b = 0; b < player_bullets.length; b++){
@@ -53,13 +55,14 @@ function detectColisions(){
 				//p.z -= 0.5;
 				col_fx.emitInstance(p);
 				player_bullets.splice(b, 1);
-				enemy_array[e].deleteEnemy();
-				enemy_array.splice(e, 1);
+				enemy_handler.updateEnemyLife(e);
+				//enemy_array[e].deleteEnemy();
+				//enemy_array.splice(e, 1);
 				break;
 			}
 		}
 	}
-}*/
+}
 
 attachEventListeners();
 //window resize event
@@ -90,12 +93,13 @@ function onKeyUp(event){
 function render()
 {
   requestAnimationFrame(render);
-	//detectColisions();
+	detectColisions();
 	bg_env_fx.update();
 	mg_env_fx.update();
 	fg_env_fx.update();
 	col_fx.update();
 	player.update();
+	enemy_handler.update();
   renderer.render(scene, camera);
 }
 
