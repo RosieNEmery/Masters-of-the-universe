@@ -6,6 +6,10 @@ const HEIGHT = window.innerHeight;
 const ASPECT = 50;
 const FAR_CLIPPING = 1000;
 const NEAR_CLIPPING = 0.1;
+const GAME_STATE_START_SCREEN = 0;
+const GAME_STATE_PLAY_SCREEN = 1;
+const GAME_STATE_END_SCREEN = 2;
+let current_game_state = 0;
 
 //you can change the name if you want
 //nah, I like this name too :)
@@ -86,6 +90,15 @@ function onKeyUp(event){
 	key_state[event.keyCode || event.which] = false;
 }
 
+function setGameStatePlay(){
+
+}
+
+function setGameStateEnd(){
+
+	
+}
+
 // Start the render loop
 function render()
 {
@@ -96,6 +109,17 @@ function render()
 	fg_env_fx.update();
 	col_fx.update();
 	player.update();
+
+	if(current_game_state = GAME_STATE_START_SCREEN){
+		//show start screen quad, and dont pass keys to player
+	}
+	else if(current_game_state = GAME_STATE_PLAY_SCREEN){
+		//play as normal
+	}
+	else if(current_game_state = GAME_STATE_END_SCREEN){
+		//show end screen quad and dont pass keys to player
+	}
+
   renderer.render(scene, camera);
 }
 

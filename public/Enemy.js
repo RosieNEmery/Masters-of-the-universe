@@ -2,6 +2,7 @@
 //flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
 
 class Enemy{
+  
   constructor(scene, select, id, event_bus, text_index, pos){
     this.select = select;
     this.id = id;
