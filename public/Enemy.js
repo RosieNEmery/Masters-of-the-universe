@@ -2,7 +2,7 @@
 //flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
 
 class Enemy{
-  constructor(scene, select, id, event_bus, text_index){
+  constructor(scene, select, id, event_bus, text_index, pos){
     this.select = select;
     this.id = id;
     this.event_bus = event_bus;
@@ -10,7 +10,7 @@ class Enemy{
 
     this.child_array = [];
 
-    this.pos = new THREE.Vector3(0, 2.5, -0.1);
+    this.pos = pos;
     this.vel = new THREE.Vector3(0, -0.01, 0);
 
     this.speed_limit = 0.1;
