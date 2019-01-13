@@ -2,7 +2,7 @@
 //flame_material.uniforms.u_flame_mult.value = (player_vel.y * -3) + 1;
 
 class Player{
-  constructor(scene, global_key_states){
+  constructor(scene, global_key_states, camera){
     //for flames/stuff thats parented to it
     this.child_array = [];
 
@@ -10,13 +10,15 @@ class Player{
 
     this.pos = new THREE.Vector3(0, 0, 0);
     this.vel = new THREE.Vector3(0, 0, 0);
-    this.bullets = new FXInstancer(scene, 9, 1000, new THREE.Vector3(0, 0.1, 0), 1000, new THREE.Vector2(1, 1), 1, true, 50, true, 1.0);
+    this.bullets = new FXInstancer(scene, 9, 1000, new THREE.Vector3(0, 0.2, 0), 1000, new THREE.Vector2(1, 1), 1, true, 50, true, 1.0);
     this.bullet_fx = new FXInstancer(scene, 5, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(0.7, 0.7), 1, false, 50, false, 1.0);
     this.active_cannon = 0;
+    this.scene = scene;
+    this.camera = camera;
 
-    this.speed_limit = 0.1;
-    this.bank_limit = 0.1;
-    this.acc = 0.01;
+    this.speed_limit = 0.2;
+    this.bank_limit = 0.3;
+    this.acc = 0.02;
 
     this.createMesh();
     this.createFlames();
@@ -80,12 +82,23 @@ class Player{
     this.bullet_fx.update();
 
     this.pos.add(this.vel);
+    let aspect = camera.aspect;
+    let fov = camera.fov;
+
+    let lim_y = 10 * Math.tan(fov * Math.PI/360);
+    let lim_x = lim_y * aspect;
+    let border = 0.5;
+    lim_x -= border;
+    lim_y -= border;
+    this.pos.x = Math.min(Math.max(this.pos.x, -lim_x), lim_x);
+    this.pos.y = Math.min(Math.max(this.pos.y, -lim_y), lim_y);
     this.flame_left.setFlameMult((this.vel.y * -3) + 1);
     this.flame_right.setFlameMult((this.vel.y * -3) + 1);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
     var bank = this.vel.x * 5;
-    clamp(bank, -this.bank_limit, this.bank_limit);
+    bank = Math.min(Math.max(bank, -this.bank_limit), this.bank_limit);
     this.mesh.rotation.set(0, bank, 0);
+
   }
 
   keyHandler(){

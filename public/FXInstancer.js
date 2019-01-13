@@ -54,8 +54,8 @@ class FXInstancer{
     this.geo.addAttribute("tex_offset", this.tex_attrib_arr);
 
     //set update interval for texture offsets
-    let t = this;
-    setInterval(function(){t.updateTextureOffsets()}, this.tex_interval);
+    let self = this;
+    setInterval(function(){self.updateTextureOffsets()}, this.tex_interval);
 
     //set up shader
     let fx_vert_shader = document.querySelector('#fx_vert_shader');
