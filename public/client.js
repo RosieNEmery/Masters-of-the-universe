@@ -31,6 +31,7 @@ document.body.appendChild(renderer.domElement);
 var enemy_array = [];
 
 let player = new Player(scene, key_state);
+let initial_hp = player.hp;
 //scene, sprite to use, enemy id, and event bus
 let enemy = new Enemy(scene, 1, enemy_array.length, party_bus, 3);
 //Maybe have an enemy container, handle movement too //////////////////////////
@@ -40,14 +41,20 @@ let fg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.6, 0), 10
 let mg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.5, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 0.7);
 let bg_env_fx = new FXInstancer(scene, 6, 100, new THREE.Vector3(0, -0.4, 0), 1000, new THREE.Vector2(1, 3), 1, true, 50, false, 0.4);
 let col_fx = new FXInstancer(scene, 3, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(1.2, 1.2), 1, false, 50, false, 1.0);
+
 setInterval(function(){fg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 10, 10, ((Math.random()-0.5) * 10)));}, 200 );
 setInterval(function(){mg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 20, 10, ((Math.random()-0.5) * 10)-10));}, 100 );
 setInterval(function(){bg_env_fx.emitInstance(new THREE.Vector3((Math.random()-0.5) * 40, 10, ((Math.random()-0.5) * 10)-20));}, 50 );
 
 function detectColisions(){
 	player_bullets = player.bullets.instance_stack;
+	let p_pos = player.pos;
 	for(let e = 0; e < enemy_array.length; e++){
 		let e_pos = enemy_array[e].pos;
+		let e_dmg = 0;
+		let p_dmg = 0;
+
+		//enemy and bullet colisions
 		for(let b = 0; b < player_bullets.length; b++){
 			let b_pos = player_bullets[b].pos;
 			let dx = e_pos.x - b_pos.x;
@@ -59,10 +66,31 @@ function detectColisions(){
 				//p.z -= 0.5;
 				col_fx.emitInstance(p);
 				player_bullets.splice(b, 1);
-				enemy_array[e].deleteEnemy();
-				enemy_array.splice(e, 1);
-				break;
+				e_dmg += 1;
 			}
+		}
+
+		//enemy and player colisons
+		let dist = p_pos.manhattanDistanceTo(e_pos);
+		if(dist < 1.2){
+			let p = p_pos.clone();
+			p.lerp(e_pos, 0.5);
+			col_fx.emitInstance(p);
+			e_dmg += 5;
+			p_dmg += 1;
+		}
+
+		//damage calculations
+		let enemy_hp = enemy_array[e].reduceHP(e_dmg);
+		if(enemy_hp == 0){
+			col_fx.emitInstance(e_pos);
+			enemy_array[e].deleteEnemy();
+			enemy_array.splice(e, 1);
+		}
+		let player_hp = player.reduceHP(p_dmg);
+		if(player_hp == 0){
+			col_fx.emitInstance(p_pos);
+			player.deletePlayer();
 		}
 	}
 }

@@ -12,11 +12,22 @@ class Player{
     this.vel = new THREE.Vector3(0, 0, 0);
     this.bullets = new FXInstancer(scene, 9, 1000, new THREE.Vector3(0, 0.1, 0), 1000, new THREE.Vector2(1, 1), 1, true, 50, true, 1.0);
     this.bullet_fx = new FXInstancer(scene, 5, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(0.7, 0.7), 1, false, 50, false, 1.0);
+
+
     this.active_cannon = 0;
 
     this.speed_limit = 0.1;
     this.bank_limit = 0.1;
     this.acc = 0.01;
+
+    this.hp = 3;
+    this.max_hp = 3;
+    this.hp_fx = new FXInstancer(scene, 15, -1, new THREE.Vector3(0, 0, 0), this.max_hp, new THREE.Vector2(0.4, 0.4), 1, true, 50, true, 1.0);
+
+    //this.hp_fx = new FXInstancer(scene, 1, 100, new THREE.Vector3(0, 0, 0), this.hp, new THREE.Vector2(1, 1), 1, true, 50, false, 1.0);
+    this.hp_fx.emitInstance(new THREE.Vector3(-4, -3, 0));
+    this.hp_fx.emitInstance(new THREE.Vector3(-4.5, -3, 0));
+    this.hp_fx.emitInstance(new THREE.Vector3(-5, -3, 0));
 
     this.createMesh();
     this.createFlames();
@@ -78,10 +89,11 @@ class Player{
 
     this.bullets.update();
     this.bullet_fx.update();
+    this.hp_fx.update();
 
     this.pos.add(this.vel);
-    this.flame_left.setFlameMult((this.vel.y * -3) + 1);
-    this.flame_right.setFlameMult((this.vel.y * -3) + 1);
+    this.flame_left.setFlameMult((this.vel.y * -5) + 1);
+    this.flame_right.setFlameMult((this.vel.y * -5) + 1);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
     var bank = this.vel.x * 5;
     clamp(bank, -this.bank_limit, this.bank_limit);
@@ -137,9 +149,17 @@ class Player{
     }
   }
 
+  reduceHP(damage){
+    this.hp = Math.max(0, this.hp - damage);
+    this.hp_fx.instance_stack.splice(this.hp);
+
+
+    return this.hp;
+  }
+
   deletePlayer(){
     //clean up flames
-    for(let i =0; i<this.child_array.length; i++){
+    for(let i = 0; i<this.child_array.length; i++){
         this.child_array[i].deleteFlame();
     }
     this.child_array.length = 0;

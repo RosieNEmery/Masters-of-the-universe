@@ -16,6 +16,8 @@ class Enemy{
     this.speed_limit = 0.1;
     this.acc = 0.01;
 
+    this.hp = 3;
+
     this.createMesh();
   }
 
@@ -103,6 +105,11 @@ class Enemy{
 
   getID(){
     return this.id;
+  }
+
+  reduceHP(damage){
+    this.hp = Math.max(0, this.hp - damage);
+    return this.hp;
   }
 
   update(){

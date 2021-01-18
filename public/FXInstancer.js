@@ -121,7 +121,7 @@ class FXInstancer{
   updateTextureOffsets(){
     for(let i = 0; i < this.instance_stack.length; i++){
       this.instance_stack[i].age += 1;
-      if(this.instance_stack[i].age > this.lifetime){
+      if((this.instance_stack[i].age > this.lifetime) && (this.lifetime != -1)){
         this.instance_stack.splice(i, 1);
       }
     }

@@ -7,7 +7,7 @@ class Flame{
     this.pos = new THREE.Vector3(pos.x, pos.y, pos.z);
     this.parent = parent;
 
-    this.flame_mult = 1.5;
+    this.flame_mult = 1;
 
     this.createMesh();
   }
@@ -34,7 +34,7 @@ class Flame{
         depthFunc: THREE.AlwaysDepth
     });
     //create geo and move mesh to position
-    const flame_geometry = new THREE.PlaneBufferGeometry(0.5, 0.4, 1, 1);
+    const flame_geometry = new THREE.PlaneBufferGeometry(0.8, 0.8, 1, 1);
     this.mesh = new THREE.Mesh(flame_geometry, this.material);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);
 
