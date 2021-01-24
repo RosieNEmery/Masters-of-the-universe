@@ -5,6 +5,7 @@ class Player{
   constructor(scene, global_key_states){
     //for flames/stuff thats parented to it
     this.child_array = [];
+    this.scene = scene;
 
     this.global_key_states = global_key_states;
 
@@ -12,7 +13,6 @@ class Player{
     this.vel = new THREE.Vector3(0, 0, 0);
     this.bullets = new FXInstancer(scene, 9, 1000, new THREE.Vector3(0, 0.1, 0), 1000, new THREE.Vector2(1, 1), 1, true, 50, true, 1.0);
     this.bullet_fx = new FXInstancer(scene, 5, 6, new THREE.Vector3(0, 0, 0), 1000, new THREE.Vector2(0.7, 0.7), 1, false, 50, false, 1.0);
-
 
     this.active_cannon = 0;
 
@@ -92,6 +92,16 @@ class Player{
     this.hp_fx.update();
 
     this.pos.add(this.vel);
+    var cam = this.scene.getObjectByName("camera");//getCamera();
+    var fov = cam.getEffectiveFOV();
+    var h = cam.getFilmHeight();
+    var w = cam.getFilmWidth();
+    var p = cam.position;
+    var y_limit = Math.tan(fov/2) * p.z * 3.5;
+    var x_limit = y_limit * w/h;
+    this.pos.x = clamp(this.pos.x, -x_limit, x_limit);
+    this.pos.y = clamp(this.pos.y, -y_limit, y_limit);
+
     this.flame_left.setFlameMult((this.vel.y * -5) + 1);
     this.flame_right.setFlameMult((this.vel.y * -5) + 1);
     this.mesh.position.set(this.pos.x, this.pos.y, this.pos.z);

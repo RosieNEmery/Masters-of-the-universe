@@ -6,6 +6,7 @@ const HEIGHT = window.innerHeight;
 const ASPECT = 50;
 const FAR_CLIPPING = 1000;
 const NEAR_CLIPPING = 0.1;
+const CAM_HEIGHT = 7.0;
 
 //you can change the name if you want
 //nah, I like this name too :)
@@ -21,7 +22,8 @@ const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(ASPECT, WIDTH / HEIGHT, NEAR_CLIPPING, FAR_CLIPPING);
 camera.lookAt(new THREE.Vector3(0,0,0));
-camera.position.set(0, 0, 7);
+camera.position.set(0, 0, CAM_HEIGHT);
+camera.name = "camera";
 scene.add(camera);
 
 document.body.appendChild(renderer.domElement);
