@@ -10,7 +10,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.14.1",
+    "express": "^4.17.3",
     "npm": "^6.4.1",
     "react": "^16.6.3"
   },
